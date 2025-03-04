@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://l7q3g1b102a7"]
 
-[ext_resource type="Script" path="res://example/player/player.gd" id="1_yff8e"]
-[ext_resource type="Script" path="res://addons/health_hitbox_hurtbox/health/health.gd" id="2_n5v70"]
-[ext_resource type="Script" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.gd" id="3_8gslm"]
+[ext_resource type="Script" uid="uid://cruarf7a0myh5" path="res://example/player/player.gd" id="1_yff8e"]
+[ext_resource type="Script" uid="uid://dr8bvnfebp76" path="res://addons/health_hitbox_hurtbox/health/health.gd" id="2_n5v70"]
+[ext_resource type="Script" uid="uid://dtfoilkdcfvgv" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.gd" id="3_8gslm"]
 [ext_resource type="Texture2D" uid="uid://bj1vycvsrai1f" path="res://example/player/player.png" id="3_dkssk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n21ov"]
