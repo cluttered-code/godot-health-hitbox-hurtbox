@@ -1,6 +1,7 @@
 name: GdUnit4 Tests
 on:
   push:
+    branches: main
     paths-ignore:
       - "**.jpg"
       - "**.png"
