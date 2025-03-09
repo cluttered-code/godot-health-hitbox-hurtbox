@@ -2,9 +2,8 @@ class_name Health extends Node
 ## Health is used to track an entity's health, death, and revival.
 
 
-## Possible actions to performed using
-## [HitBox2D], [HitBox3D], [HitScan2D], or [HitScan3D].
-enum Action { DAMAGE, HEAL }
+## Affect an action will have on [Health].
+enum Affect { NONE, DAMAGE, HEAL }
 
 ## Emitted after damage is applied.
 signal damaged(entity: Node, amount: int, applied: int, multiplier: float)
