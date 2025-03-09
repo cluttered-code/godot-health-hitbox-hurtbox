@@ -1,4 +1,4 @@
-class_name HealthActionModifier extends Resource
+class_name HealthModifiedAction extends Resource
 
 var action: HealthAction
 var modifier: HealthModifier

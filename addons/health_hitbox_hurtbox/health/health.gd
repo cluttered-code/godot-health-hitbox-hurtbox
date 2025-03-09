@@ -6,14 +6,17 @@ class_name Health extends Node
 enum Affect { NONE, DAMAGE, HEAL }
 
 ## Emitted after damage is applied.
-signal damaged(entity: Node, amount: int, applied: int, multiplier: float)
+signal damaged(entity: Node, type: HealthActionType.Enum, amount: int, incrementer: int, multiplier: float, applied: int)
 ## Emitted after damage is applied when death has occured.
 signal died(entity: Node)
 
 ## Emitted after healing is applied.
-signal healed(entity: Node, amount: int, applied: int, multiplier: float)
+signal healed(entity: Node, type: HealthActionType.Enum, amount: int, incrementer: int, multiplier: float, applied: int)
 ## Emitted after healing is applied when dead.
 signal revived(entity: Node)
+
+## Emitted after damage or healing is applied.
+signal action_applied(action: HealthModifiedAction, applied: int)
 
 
 ## Emitted when damaged and entity had full health.
@@ -70,6 +73,8 @@ const DEFAULT_MAX = 100
 
 
 @export_group("Advanced")
+## Additional [Modifer] applied to [Affect.Type].
+@export var modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {}
 ## The entity this component is tracking health for,
 ## sent in signals for association.[br][br]
 ## Defaults to [color=orange]owner[/color].
@@ -104,12 +109,87 @@ func kill() -> void:
 
 
 ## Apply enough healing to fill.
-func fill_health() -> void:
+func fill() -> void:
 	heal(max - current)
 
 
+## Apply all the [HealthAction] objects in the arary.
+func apply_all_actions(actions: Array[HealthAction]) -> void:
+	actions.all(apply_action)
+
+
+## Apply the specified [HealthAction].
+func apply_action(action: HealthAction) -> void:
+	var modified_action := HealthModifiedAction.new(action, HealthModifier.new())
+	apply_modified_action(modified_action)
+
+
+## Apply all the [HealthModifiedAction] objects in the arary.
+func apply_all_modified_actions(actions: Array[HealthModifiedAction]) -> void:
+	actions.all(apply_modified_action)
+
+
+## Apply the specified [HealthModifiedAction].
+func apply_modified_action(action: HealthModifiedAction) -> void:
+	if not action:
+		return
+	
+	var modifier := _get_modifier(action.type)
+
+	var affect: Affect = modifier.convert_affect if modifier.convert_affect else action.affect
+	var type: HealthActionType.Enum = modifier.convert_type if modifier.convert_type else action.type
+
+	var amount := action.amount
+	var incrementer := action.incrementer + modifier.incrementer
+	var multiplier := action.multiplier * modifier.multiplier
+
+	match affect:
+		Affect.DAMAGE:
+			_damage(amount, incrementer, multiplier, type)
+		Affect.HEAL:
+			_heal(amount, incrementer, multiplier, type)
+		_:
+			print_debug("%s affect unimplemented" % affect)
+
+
 ## Apply the specified amount of damage if damageable and not dead.
-func damage(amount: int, multiplier: float = 1.0) -> void:
+func damage(amount: int, incrementer: int = 0, multiplier: float = 1.0, type: HealthActionType.Enum = HealthActionType.Enum.NONE) -> void:
+	var modifier := _get_modifier(type)
+
+	var affect: Affect = modifier.convert_affect if modifier.convert_affect else Affect.DAMAGE
+	if modifier.convert_type:
+		type = modifier.convert_type
+
+	incrementer += modifier.incrementer
+	multiplier *= modifier.multiplier
+
+	if affect == Affect.HEAL:
+		_heal(amount, incrementer, multiplier, type)
+		return
+	
+	_damage(amount, incrementer, multiplier, type)
+
+
+## apply the specified amount of healing if healable, not full, or dead and revivable.
+func heal(amount: int, incrementer: int = 0, multiplier: float = 1.0, type: HealthActionType.Enum = HealthActionType.Enum.NONE) -> void:
+	var modifier := _get_modifier(type)
+
+	var affect: Affect = modifier.convert_affect if modifier.convert_affect else Affect.HEAL
+	if modifier.convert_type:
+		type = modifier.convert_type
+
+	incrementer += modifier.incrementer
+	multiplier *= modifier.multiplier
+
+	if affect == Affect.DAMAGE:
+		_damage(amount, incrementer, multiplier, type)
+		return
+	
+	_heal(amount, incrementer, multiplier, type)
+
+
+## Apply the specified amount of damage if damageable and not dead.
+func _damage(amount: int, incrementer: int = 0, multiplier: float = 1.0, type: HealthActionType.Enum = HealthActionType.Enum.NONE) -> void:
 	if not damageable:
 		print_debug("%s cannot be damaged" % entity)
 		not_damageable.emit(entity)
@@ -120,7 +200,7 @@ func damage(amount: int, multiplier: float = 1.0) -> void:
 		already_dead.emit(entity)
 		return
 	
-	var applied := clampi(roundi(amount * multiplier), 0, current)
+	var applied := clampi(roundi((amount + incrementer) * multiplier), 0, current)
 	if applied == current and not killable:
 		print_debug("%s is not killable" % entity)
 		not_killable.emit(entity)
@@ -128,8 +208,15 @@ func damage(amount: int, multiplier: float = 1.0) -> void:
 
 	var is_first_hit := is_full() and applied > 0
 	current -= applied
-	print_debug("%s damaged amount=%d multiplier=%0.4f applied=%d current=%d" % [entity, amount, multiplier, applied, current])
-	damaged.emit(entity, amount, applied, multiplier)
+	print_debug(
+		"%s DAMAGE type=%s amount=%d incrementer=%d multiplier=%0.4f applied=%d current=%d"
+		% [entity, HealthActionType.Enum.find_key(type), amount, incrementer, multiplier, applied, current]
+	)
+	damaged.emit(entity, type, amount, incrementer, multiplier, applied)
+
+	var action := HealthAction.new(Affect.DAMAGE, type, amount)
+	var modified_action := HealthModifiedAction.new(action, HealthModifier.new(incrementer, multiplier))
+	action_applied.emit(modified_action, applied)
 	
 	if is_first_hit:
 		print_debug("%s first hit" % entity)
@@ -141,7 +228,7 @@ func damage(amount: int, multiplier: float = 1.0) -> void:
 
 
 ## apply the specified amount of healing if healable, not full, or dead and revivable.
-func heal(amount: int, multiplier: float = 1.0) -> void:
+func _heal(amount: int, incrementer: int = 0, multiplier: float = 1.0, type: HealthActionType.Enum = HealthActionType.Enum.NONE) -> void:
 	if not healable:
 		print_debug("%s is not healable" % entity)
 		not_healable.emit(entity)
@@ -159,10 +246,17 @@ func heal(amount: int, multiplier: float = 1.0) -> void:
 	
 	var notify_revived := is_dead() and amount > 0
 	
-	var applied := clampi(roundi(amount * multiplier), 0, max - current)
+	var applied := clampi(roundi((amount + incrementer) * multiplier), 0, max - current)
 	current += applied
-	print_debug("%s healed amount=%d multiplier=%0.4f applied=%d current=%d" % [entity, amount, multiplier, applied, current])
-	healed.emit(entity, amount, applied, multiplier)
+	print_debug(
+		"%s HEAL type=%s amount=%d incrementer=%d multiplier=%0.4f applied=%d current=%d"
+		% [entity, HealthActionType.Enum.find_key(type), amount, incrementer, multiplier, applied, current]
+	)
+	healed.emit(entity, type, amount, incrementer, multiplier, applied)
+
+	var action := HealthAction.new(Affect.HEAL, type, amount)
+	var modified_action := HealthModifiedAction.new(action, HealthModifier.new(incrementer, multiplier))
+	action_applied.emit(modified_action, applied)
 	
 	if current == max and applied > 0:
 		print_debug("%s has full health" % entity)
@@ -171,3 +265,7 @@ func heal(amount: int, multiplier: float = 1.0) -> void:
 	if notify_revived:
 		print_debug("%s revived" % entity)
 		revived.emit(entity)
+
+
+func _get_modifier(type: HealthActionType.Enum) -> HealthModifier:
+	return modifiers.get(type, HealthModifier.new())

@@ -8,7 +8,7 @@ class_name HealthModifier extends Resource
 
 
 func _init(
-	incrementer: int = 1,
+	incrementer: int = 0,
 	multiplier: float = 1.0,
 	convert_affect: Health.Affect = Health.Affect.NONE,
 	convert_type: HealthActionType.Enum = HealthActionType.Enum.NONE
