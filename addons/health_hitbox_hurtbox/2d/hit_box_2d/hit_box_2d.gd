@@ -12,8 +12,8 @@ signal action_applied(hurt_box: HurtBox2D)
 signal unknown_area_entered(area: Area2D)
 
 
-## The [Health.Action] to be performed.
-@export var action: Health.Action = Health.Action.DAMAGE
+## The [Health.Affect] to be performed.
+@export var affect: Health.Affect = Health.Affect.DAMAGE
 ## The amount of the action.
 @export var amount: int = 1
 ## Ignore collisions when [color=orange]true[/color].[br]
@@ -47,10 +47,10 @@ func _on_area_entered(area: Area2D) -> void:
 	action_applied.emit(hurt_box)
 
 
-## Perfomes the [Health.Action] on the specified [HurtBox2D].
+## Perfomes the [Health.Affect] on the specified [HurtBox2D].
 func _apply_action(hurt_box: HurtBox2D) -> void:
-	match action:
-		Health.Action.DAMAGE:
+	match affect:
+		Health.Affect.DAMAGE:
 			hurt_box.damage(amount)
-		Health.Action.HEAL:
+		Health.Affect.HEAL:
 			hurt_box.heal(amount)

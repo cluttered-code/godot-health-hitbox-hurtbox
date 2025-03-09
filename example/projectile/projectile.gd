@@ -8,9 +8,9 @@ var amount: int:
 	get(): return hit_box.amount
 	set(value): hit_box.amount = value
 	
-var action: Health.Action:
-	get(): return hit_box.action
-	set(value): hit_box.action = value
+var affect: Health.Affect:
+	get(): return hit_box.affect
+	set(value): hit_box.affect = value
 
 func _ready() -> void:
 	hit_box.hurt_box_entered.connect(_on_hurt_box_entered)

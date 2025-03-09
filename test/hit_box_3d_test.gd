@@ -14,7 +14,7 @@ func before_test() -> void:
 
 
 func test_on_area_entered_damage() -> void:
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -27,7 +27,7 @@ func test_on_area_entered_damage() -> void:
 
 
 func test_on_area_entered_heal() -> void:
-	hit_box.action = Health.Action.HEAL
+	hit_box.affect = Health.Affect.HEAL
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -47,7 +47,7 @@ func test_on_area_entered_hit_box() -> void:
 
 func test_on_area_entered_ignore() -> void:
 	hit_box.ignore_collisions = true
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -62,7 +62,7 @@ func test_on_area_entered_ignore() -> void:
 
 
 func test_on_area_entered_area3d() -> void:
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	var area: Area3D = auto_free(Area3D.new())

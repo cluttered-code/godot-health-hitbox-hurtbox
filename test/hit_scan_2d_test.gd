@@ -14,7 +14,7 @@ func before_test() -> void:
 
 
 func test_fire_damage() -> void:
-	hit_scan.action = Health.Action.DAMAGE
+	hit_scan.affect = Health.Affect.DAMAGE
 	hit_scan.amount = 10
 	hit_scan._collider = mock_hurt_box
 	
@@ -28,7 +28,7 @@ func test_fire_damage() -> void:
 
 
 func test_fire_heal() -> void:
-	hit_scan.action = Health.Action.HEAL
+	hit_scan.affect = Health.Affect.HEAL
 	hit_scan.amount = 10
 	hit_scan._collider = mock_hurt_box
 	
