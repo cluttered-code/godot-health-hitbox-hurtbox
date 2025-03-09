@@ -9,52 +9,28 @@ class_name HurtBox2D extends Area2D
 		if Engine.is_editor_hint():
 			update_configuration_warnings()
 
-## The multiplier to apply to all damage actions.
-@export var damage_multiplier: float = 1.0
-## The multiplier to apply to all heal actions.
-@export var heal_multiplier: float = 1.0
-
-@export_group("Advanced")
-## Applies healing to [Health] when [color=orange]damage()[/color] is called.
-@export var heal_on_damage: bool = false
-## Applies damage to [Health] when [color=orange]heal()[/color] is called.
-@export var damage_on_heal: bool = false
+## [HealthModifier] applied to [HealthActionType.Enum].
+@export var modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {}
 
 
-
-## Calculates and applies damage to associated [Health].
-## Will apply healing to [Health] if `heal_on_damage` set to [color=orange]true[/color].
-func damage(amount: int) -> void:
-	if not health:
-		push_error("%s is missing a 'Health' component" % self)
-		return
+## Will apply [Array] of [HealthActionMultipler] to [Health].
+func apply(actions: Array[HealthAction]) -> void:
+	var ams = actions\
+		.filter(func(action: HealthAction): return action)\
+		.map(_compose_action_modifier)
 	
-	if roundi(amount * damage_multiplier) == 0:
-		return
-	
-	if heal_on_damage:
-		health.heal(amount, damage_multiplier)
-		return
-	
-	health.damage(amount, damage_multiplier)
+	var action_modifiers: Array[HealthActionModifier]
+	action_modifiers.assign(ams)
+	health.apply_all(action_modifiers)
 
 
-## Calculates and applies healing to associated [Health].
-## Will apply damage to [Health] if `damage_on_heal` set to [color=orange]true[/color].
-func heal(amount: int) -> void:
-	if not health:
-		push_error("%s is missing a 'Health' component" % self)
-		return
-	
-	if roundi(amount * heal_multiplier) == 0:
-		return
-	
-	if damage_on_heal:
-		health.damage(amount, heal_multiplier)
-		return
-	
-	health.heal(amount, heal_multiplier)
+func _compose_action_modifier(action: HealthAction) -> HealthActionModifier:
+	var modifier := _get_modifier(action.type)
+	return HealthActionModifier.new(action, modifier)
 
+
+func _get_modifier(type: HealthActionType.Enum) -> HealthModifier:
+	return modifiers.get(type, HealthModifier.new())
 
 # Warn users if values haven't been configured.
 func _get_configuration_warnings() -> PackedStringArray:

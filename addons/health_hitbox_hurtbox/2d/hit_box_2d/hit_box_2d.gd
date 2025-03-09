@@ -11,11 +11,9 @@ signal action_applied(hurt_box: HurtBox2D)
 ## Can be using to detect things like environment.
 signal unknown_area_entered(area: Area2D)
 
+## Array of [HealthAction] to be applied when [HurtBox2D] encountered.
+@export var actions: Array[HealthAction] = [HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 1)]
 
-## The [Health.Action] to be performed.
-@export var action: Health.Action = Health.Action.DAMAGE
-## The amount of the action.
-@export var amount: int = 1
 ## Ignore collisions when [color=orange]true[/color].[br]
 ## Set this to [color=orange]true[/color] after a collision is detected to avoid
 ## further collisions.[br]
@@ -28,7 +26,7 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 
-## Detect collisions with [HitBox2D] or [HurtBox2D] and apply appropriate action.
+## Detect collisions with [HitBox2D] or [HurtBox2D] and apply [Action].
 func _on_area_entered(area: Area2D) -> void:
 	if ignore_collisions:
 		return
@@ -43,14 +41,5 @@ func _on_area_entered(area: Area2D) -> void:
 	
 	var hurt_box: HurtBox2D = area
 	hurt_box_entered.emit(hurt_box)
-	_apply_action(hurt_box)
+	hurt_box.apply(actions)
 	action_applied.emit(hurt_box)
-
-
-## Perfomes the [Health.Action] on the specified [HurtBox2D].
-func _apply_action(hurt_box: HurtBox2D) -> void:
-	match action:
-		Health.Action.DAMAGE:
-			hurt_box.damage(amount)
-		Health.Action.HEAL:
-			hurt_box.heal(amount)
