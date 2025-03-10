@@ -1,20 +1,20 @@
 @tool
 class_name HitScan3D extends RayCast3D
-## HitScan3D interacts with [HurtBox3D] to affect [Health] components.
+## HitScan3D interacts with [BasicHurtBox3D] to affect [Health] components.
 
 ## emitted when collision with [HitBox3D] detected.
 signal hit_box_entered(hit_box: HitBox3D)
-## emitted when collision with [HurtBox3D] detected.
-signal hurt_box_entered(hurt_box: HurtBox3D)
-## emitted after the action is applied to a [HurtBox3D].
-signal action_applied(hurt_box: HurtBox3D)
-## emitted when collision with [Area3D] that isn't [HitBox3D] or [HurtBox3D].
+## emitted when collision with [BasicHurtBox3D] detected.
+signal hurt_box_entered(hurt_box: BasicHurtBox3D)
+## emitted after the action is applied to a [BasicHurtBox3D].
+signal action_applied(hurt_box: BasicHurtBox3D)
+## emitted when collision with [Area3D] that isn't [HitBox3D] or [BasicHurtBox3D].
 ## Used to detect things like environment.
 signal unknown_area_entered(area: Area3D)
 
 
-## The [Health.Action] to be performed.
-@export var action: Health.Action = Health.Action.DAMAGE
+## The [Health.Affect] to be performed.
+@export var affect: Health.Affect = Health.Affect.DAMAGE
 ## The amount of the action.
 @export var amount: int = 1
 
@@ -43,7 +43,7 @@ func _set(property: StringName, value: Variant) -> bool:
 	return true
 
 
-## Detect collisions with [HurtBox3D] and apply appropriate action.
+## Detect collisions with [BasicHurtBox3D] and apply appropriate action.
 func fire() -> void:
 	var collider = _collider if _collider else get_collider()
 	if not collider:
@@ -56,20 +56,20 @@ func fire() -> void:
 		hit_box_entered.emit(collider)
 		return
 	
-	if collider is not HurtBox3D:
+	if collider is not BasicHurtBox3D:
 		unknown_area_entered.emit(collider)
 		return
 	
-	var hurt_box: HurtBox3D = collider
+	var hurt_box: BasicHurtBox3D = collider
 	hurt_box_entered.emit(hurt_box)
 	_apply_action(hurt_box)
 	action_applied.emit(hurt_box)
 
 
-## Perfomes the [Health.Action] on the specified [HurtBox3D].
-func _apply_action(hurt_box: HurtBox3D) -> void:
-	match action:
-		Health.Action.DAMAGE:
+## Perfomes the [Health.Affect] on the specified [BasicHurtBox3D].
+func _apply_action(hurt_box: BasicHurtBox3D) -> void:
+	match affect:
+		Health.Affect.DAMAGE:
 			hurt_box.damage(amount)
-		Health.Action.HEAL:
+		Health.Affect.HEAL:
 			hurt_box.heal(amount)

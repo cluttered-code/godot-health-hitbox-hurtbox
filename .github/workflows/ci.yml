@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        godot-version: ['4.3', '4.4']
+        godot-version: ['4.4']
 
     steps:
       - name: Checkout Repository

@@ -1,6 +1,6 @@
 @tool
-class_name HurtBox2D extends Area2D
-## HurtBox2D enables collision detection by [HitBox2D] or [HitScan2D] and applies affects to [Health].
+class_name BasicHurtBox2D extends Area2D
+## BasicHurtBox2D enables collision detection by [HitBox2D] or [HitScan2D] and applies affects to [Health].
 
 ## The [Health] component to affect.
 @export var health: Health = null:
@@ -33,10 +33,10 @@ func damage(amount: int) -> void:
 		return
 	
 	if heal_on_damage:
-		health.heal(amount, damage_multiplier)
+		health.heal(amount, 0, damage_multiplier)
 		return
 	
-	health.damage(amount, damage_multiplier)
+	health.damage(amount, 0, damage_multiplier)
 
 
 ## Calculates and applies healing to associated [Health].
@@ -50,10 +50,10 @@ func heal(amount: int) -> void:
 		return
 	
 	if damage_on_heal:
-		health.damage(amount, heal_multiplier)
+		health.damage(amount, 0, heal_multiplier)
 		return
 	
-	health.heal(amount, heal_multiplier)
+	health.heal(amount, 0, heal_multiplier)
 
 
 # Warn users if values haven't been configured.

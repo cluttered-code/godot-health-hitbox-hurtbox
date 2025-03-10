@@ -4,8 +4,7 @@ class_name Enemy extends CharacterBody2D
 @onready var progress_bar: ProgressBar = $ProgressBar
 
 func _ready() -> void:
-	health.damaged.connect(_on_health_changed)
-	health.healed.connect(_on_health_changed)
+	health.action_applied.connect(_on_health_action_applied)
 	health.died.connect(_on_died)
 
 
@@ -17,10 +16,10 @@ func _process(delta: float) -> void:
 
 
 func _on_died(_entity: Node) -> void:
-	health.fill_health()
+	health.fill()
 
 
-func _on_health_changed(_entity: Node, _amount: int, _applied: int, _multiplier: float) -> void:
+func _on_health_action_applied(action: HealthModifiedAction, applied: int) -> void:
 	_update_progress_bar()
 
 

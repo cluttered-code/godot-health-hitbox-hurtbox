@@ -2,19 +2,19 @@ class_name HitBox2DTest extends GdUnitTestSuite
 @warning_ignore('unused_parameter')
 @warning_ignore('return_value_discarded')
 
-var mock_hurt_box: HurtBox2D
+var mock_hurt_box: BasicHurtBox2D
 var hit_box: HitBox2D
 var signals: Object
 
 
 func before_test() -> void:
-	mock_hurt_box = auto_free(mock(HurtBox2D))
+	mock_hurt_box = auto_free(mock(BasicHurtBox2D))
 	hit_box = auto_free(HitBox2D.new())
 	signals = monitor_signals(hit_box)
 
 
 func test_on_area_entered_damage() -> void:
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -27,7 +27,7 @@ func test_on_area_entered_damage() -> void:
 
 
 func test_on_area_entered_heal() -> void:
-	hit_box.action = Health.Action.HEAL
+	hit_box.affect = Health.Affect.HEAL
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -47,7 +47,7 @@ func test_on_area_entered_hit_box() -> void:
 
 func test_on_area_entered_ignore() -> void:
 	hit_box.ignore_collisions = true
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	hit_box._on_area_entered(mock_hurt_box)
@@ -62,7 +62,7 @@ func test_on_area_entered_ignore() -> void:
 
 
 func test_on_area_entered_area2d() -> void:
-	hit_box.action = Health.Action.DAMAGE
+	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	
 	var area: Area2D = auto_free(Area2D.new())

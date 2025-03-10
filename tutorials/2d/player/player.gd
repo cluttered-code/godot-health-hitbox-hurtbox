@@ -29,7 +29,7 @@ func _physics_process(_delta: float) -> void:
 
 func _flip_toward_mouse(mouse_position: Vector2) -> void:
 	# ALERT: using != and inverting subtraction causes jitter at crossover
-	if signi(transform.x.x) == signf(global_position.x - mouse_position.x):
+	if signf(transform.x.x) == signf(global_position.x - mouse_position.x):
 		transform.x *= Transform2D.FLIP_X
 
 

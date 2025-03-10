@@ -19,9 +19,9 @@ func destory() -> void:
 	queue_free()
 
 
-func _on_action_applied(_hurt_box: HurtBox2D) -> void:
+func _on_action_applied(_hurt_box: BasicHurtBox2D) -> void:
 	destory()
 
 
-func _on_body_entered(body: Node2D) -> void:
+func _on_body_entered(_body: Node2D) -> void:
 	destory()

@@ -8,9 +8,9 @@ var amount: int:
 	get(): return hit_box.amount
 	set(value): hit_box.amount = value
 	
-var action: Health.Action:
-	get(): return hit_box.action
-	set(value): hit_box.action = value
+var affect: Health.Affect:
+	get(): return hit_box.affect
+	set(value): hit_box.affect = value
 
 func _ready() -> void:
 	hit_box.hurt_box_entered.connect(_on_hurt_box_entered)
@@ -20,6 +20,6 @@ func _physics_process(delta: float) -> void:
 	position.x -= SPEED * delta
 
 
-func _on_hurt_box_entered(_hurt_box: HurtBox2D) -> void:
+func _on_hurt_box_entered(_hurt_box: BasicHurtBox2D) -> void:
 	hit_box.ignore_collisions = true
 	queue_free()
