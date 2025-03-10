@@ -1,13 +1,13 @@
 class_name HitBox3D extends Area3D
-## [HitBox3D] is associated with an object that can collide with a [HurtBox3D].
+## [HitBox3D] is associated with an object that can collide with a [BasicHurtBox3D].
 
 ## emitted when collision with [HitBox3D] detected.
 signal hit_box_entered(hit_box: HitBox3D)
-## emitted when collision with [HurtBox3D] detected.
-signal hurt_box_entered(hurt_box: HurtBox3D)
-## emitted after the action is applied to a [HurtBox3D].
-signal action_applied(hurt_box: HurtBox3D)
-## emitted when collision with [Area3D] that isn't [HitBox3D] or [HurtBox3D].
+## emitted when collision with [BasicHurtBox3D] detected.
+signal hurt_box_entered(hurt_box: BasicHurtBox3D)
+## emitted after the action is applied to a [BasicHurtBox3D].
+signal action_applied(hurt_box: BasicHurtBox3D)
+## emitted when collision with [Area3D] that isn't [HitBox3D] or [BasicHurtBox3D].
 ## Can be using to detect things like environment.
 signal unknown_area_entered(area: Area3D)
 
@@ -28,7 +28,7 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 
-## Detect collisions with [HitBox3D] or [HurtBox3D] and apply appropriate action.
+## Detect collisions with [HitBox3D] or [BasicHurtBox3D] and apply appropriate action.
 func _on_area_entered(area: Area3D) -> void:
 	if ignore_collisions:
 		return
@@ -37,18 +37,18 @@ func _on_area_entered(area: Area3D) -> void:
 		hit_box_entered.emit(area)
 		return
 	
-	if area is not HurtBox3D:
+	if area is not BasicHurtBox3D:
 		unknown_area_entered.emit(area)
 		return
 	
-	var hurt_box: HurtBox3D = area
+	var hurt_box: BasicHurtBox3D = area
 	hurt_box_entered.emit(hurt_box)
 	_apply_action(hurt_box)
 	action_applied.emit(hurt_box)
 
 
-## Perfomes the [Health.Affect] on the specified [HurtBox3D].
-func _apply_action(hurt_box: HurtBox3D) -> void:
+## Perfomes the [Health.Affect] on the specified [BasicHurtBox3D].
+func _apply_action(hurt_box: BasicHurtBox3D) -> void:
 	match affect:
 		Health.Affect.DAMAGE:
 			hurt_box.damage(amount)

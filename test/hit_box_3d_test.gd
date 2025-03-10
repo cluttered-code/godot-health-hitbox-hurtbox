@@ -2,13 +2,13 @@ class_name HitBox3DTest extends GdUnitTestSuite
 @warning_ignore('unused_parameter')
 @warning_ignore('return_value_discarded')
 
-var mock_hurt_box: HurtBox3D
+var mock_hurt_box: BasicHurtBox3D
 var hit_box: HitBox3D
 var signals: Object
 
 
 func before_test() -> void:
-	mock_hurt_box = auto_free(mock(HurtBox3D))
+	mock_hurt_box = auto_free(mock(BasicHurtBox3D))
 	hit_box = auto_free(HitBox3D.new())
 	signals = monitor_signals(hit_box)
 

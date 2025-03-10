@@ -3,12 +3,12 @@ class_name HurtBox3DTest extends GdUnitTestSuite
 @warning_ignore('return_value_discarded')
 
 var mock_health: Health
-var hurt_box: HurtBox3D
+var hurt_box: BasicHurtBox3D
 
 
 func before_test() -> void:
 	mock_health = auto_free(mock(Health))
-	hurt_box = auto_free(HurtBox3D.new())
+	hurt_box = auto_free(BasicHurtBox3D.new())
 	hurt_box.health = mock_health
 	add_child(hurt_box)
 

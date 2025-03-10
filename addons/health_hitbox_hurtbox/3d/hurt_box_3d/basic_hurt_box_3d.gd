@@ -1,6 +1,6 @@
 @tool
-class_name HurtBox3D extends Area3D
-## HurtBox3D enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
+class_name BasicHurtBox3D extends Area3D
+## BasicHurtBox3D enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
 
 ## The [Health] component to affect.
 @export var health: Health = null:
