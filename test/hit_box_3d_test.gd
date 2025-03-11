@@ -62,7 +62,7 @@ func test_on_area_entered_ignore() -> void:
 	await assert_signal(signals).wait_until(50).is_not_emitted("action_applied", [any()])
 
 
-func test_on_area_entered_area2d() -> void:
+func test_on_area_entered_area3d() -> void:
 	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
 	

@@ -25,12 +25,14 @@ var _actions: Array[HealthAction] = [
 	set(affect):
 		_actions[0].affect = affect
 		_actions[0].type = HealthActionType.Enum.KINETIC if affect == Health.Affect.DAMAGE else HealthActionType.Enum.MEDICINE
+
 ## The amount of the action.
 @export var amount: int = 1:
 	get():
 		return _actions[0].amount
 	set(amount):
 		_actions[0].amount = amount
+
 ## Ignore collisions when [color=orange]true[/color].[br]
 ## Set this to [color=orange]true[/color] after a collision is detected to avoid
 ## further collisions.[br]
