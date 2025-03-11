@@ -12,10 +12,25 @@ signal action_applied(hurt_box: HurtBox2D)
 signal unknown_area_entered(area: Area2D)
 
 
+## [Modifer] applied to [HealthActionType.Enum].
+var _actions: Array[HealthAction] = [
+	HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 1)
+]
+
+
 ## The [Health.Affect] to be performed.
-@export var affect: Health.Affect = Health.Affect.DAMAGE
+@export var affect: Health.Affect = Health.Affect.DAMAGE:
+	get():
+		return _actions[0].affect
+	set(affect):
+		_actions[0].affect = affect
+		_actions[0].type = HealthActionType.Enum.KINETIC if affect == Health.Affect.DAMAGE else HealthActionType.Enum.MEDICINE
 ## The amount of the action.
-@export var amount: int = 1
+@export var amount: int = 1:
+	get():
+		return _actions[0].amount
+	set(amount):
+		_actions[0].amount = amount
 ## Ignore collisions when [color=orange]true[/color].[br]
 ## Set this to [color=orange]true[/color] after a collision is detected to avoid
 ## further collisions.[br]
@@ -43,14 +58,5 @@ func _on_area_entered(area: Area2D) -> void:
 	
 	var hurt_box: HurtBox2D = area
 	hurt_box_entered.emit(hurt_box)
-	_apply_action(hurt_box)
+	hurt_box.apply_all_actions(_actions)
 	action_applied.emit(hurt_box)
-
-
-## Perfomes the [Health.Affect] on the specified [HurtBox2D].
-func _apply_action(hurt_box: HurtBox2D) -> void:
-	match affect:
-		Health.Affect.DAMAGE:
-			hurt_box.damage(amount)
-		Health.Affect.HEAL:
-			hurt_box.heal(amount)

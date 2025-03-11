@@ -16,11 +16,12 @@ func before_test() -> void:
 func test_on_area_entered_damage() -> void:
 	hit_box.affect = Health.Affect.DAMAGE
 	hit_box.amount = 10
+
+	var action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 10)
 	
 	hit_box._on_area_entered(mock_hurt_box)
 	
-	verify(mock_hurt_box, 1).damage(10)
-	verify(mock_hurt_box, 0).heal(any_int())
+	verify(mock_hurt_box, 1).apply_all_actions([HealthActionMatcher.new(action)])
 	
 	await assert_signal(signals).is_emitted("hurt_box_entered", [mock_hurt_box])
 	await assert_signal(signals).is_emitted("action_applied", [mock_hurt_box])
@@ -29,11 +30,12 @@ func test_on_area_entered_damage() -> void:
 func test_on_area_entered_heal() -> void:
 	hit_box.affect = Health.Affect.HEAL
 	hit_box.amount = 10
+
+	var action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE, 10)
 	
 	hit_box._on_area_entered(mock_hurt_box)
 	
-	verify(mock_hurt_box, 0).damage(any_int())
-	verify(mock_hurt_box, 1).heal(10)
+	verify(mock_hurt_box, 1).apply_all_actions([HealthActionMatcher.new(action)])
 	
 	await assert_signal(signals).is_emitted("hurt_box_entered", [mock_hurt_box])
 	await assert_signal(signals).is_emitted("action_applied", [mock_hurt_box])
@@ -52,8 +54,7 @@ func test_on_area_entered_ignore() -> void:
 	
 	hit_box._on_area_entered(mock_hurt_box)
 	
-	verify(mock_hurt_box, 0).damage(any_int())
-	verify(mock_hurt_box, 0).heal(any_int())
+	verify(mock_hurt_box, 0).apply_all_actions(any_array())
 	
 	await assert_signal(signals).wait_until(50).is_not_emitted("unknown_area_entered", [any()])
 	await assert_signal(signals).wait_until(50).is_not_emitted("hurt_box_entered", [any()])
@@ -69,8 +70,7 @@ func test_on_area_entered_area2d() -> void:
 	
 	hit_box._on_area_entered(area)
 	
-	verify(mock_hurt_box, 0).damage(any_int())
-	verify(mock_hurt_box, 0).heal(any_int())
+	verify(mock_hurt_box, 0).apply_all_actions(any_array())
 	
 	await assert_signal(signals).is_emitted("unknown_area_entered", [area])
 	
