@@ -17,3 +17,7 @@ func _init(
 	self.multiplier = multiplier
 	self.convert_affect = convert_affect
 	self.convert_type = convert_type
+
+
+func duplicate(subresources: bool = false) -> HealthModifier:
+	return HealthModifier.new(incrementer, multiplier, convert_affect, convert_type)

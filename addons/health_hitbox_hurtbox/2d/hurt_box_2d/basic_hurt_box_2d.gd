@@ -2,6 +2,12 @@
 class_name BasicHurtBox2D extends Area2D
 ## BasicHurtBox2D enables collision detection by [HitBox2D] or [HitScan2D] and applies affects to [Health].
 
+## [Modifer] applied to [HealthActionType.Enum].
+var _modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {
+	HealthActionType.Enum.MEDICINE: HealthModifier.new(),
+	HealthActionType.Enum.KINETIC: HealthModifier.new()
+}
+
 ## The [Health] component to affect.
 @export var health: Health = null:
 	set(new_health):
@@ -10,50 +16,54 @@ class_name BasicHurtBox2D extends Area2D
 			update_configuration_warnings()
 
 ## The multiplier to apply to all damage actions.
-@export var damage_multiplier: float = 1.0
+@export var damage_multiplier: float = 1.0:
+	get():
+		return _modifiers[HealthActionType.Enum.KINETIC].multiplier
+	set(mult):
+		_modifiers[HealthActionType.Enum.KINETIC].multiplier = mult
+
 ## The multiplier to apply to all heal actions.
-@export var heal_multiplier: float = 1.0
+@export var heal_multiplier: float = 1.0:
+	get():
+		return _modifiers[HealthActionType.Enum.MEDICINE].multiplier
+	set(mult):
+		_modifiers[HealthActionType.Enum.MEDICINE].multiplier = mult
 
 @export_group("Advanced")
+
 ## Applies healing to [Health] when [color=orange]damage()[/color] is called.
-@export var heal_on_damage: bool = false
+@export var heal_on_damage: bool = false:
+	get():
+		return _modifiers[HealthActionType.Enum.KINETIC].convert_affect == Health.Affect.HEAL
+	set(b):
+		_modifiers[HealthActionType.Enum.KINETIC].convert_affect = Health.Affect.HEAL if b else Health.Affect.DAMAGE
+
 ## Applies damage to [Health] when [color=orange]heal()[/color] is called.
-@export var damage_on_heal: bool = false
+@export var damage_on_heal: bool = false:
+	get():
+		return _modifiers[HealthActionType.Enum.MEDICINE].convert_affect == Health.Affect.DAMAGE
+	set(b):
+		_modifiers[HealthActionType.Enum.MEDICINE].convert_affect = Health.Affect.DAMAGE if b else Health.Affect.HEAL
 
 
-
-## Calculates and applies damage to associated [Health].
-## Will apply healing to [Health] if `heal_on_damage` set to [color=orange]true[/color].
-func damage(amount: int) -> void:
+func apply_all_actions(actions: Array[HealthAction]) -> void:
 	if not health:
 		push_error("%s is missing a 'Health' component" % self)
 		return
 	
-	if roundi(amount * damage_multiplier) == 0:
-		return
+	var modified_actions: Array[HealthModifiedAction]
+	modified_actions.assign(
+		actions.filter(func(action: HealthAction) -> bool: return action != null)
+			.map(_map_modified_action)
+	)
 	
-	if heal_on_damage:
-		health.heal(amount, 0, damage_multiplier)
-		return
-	
-	health.damage(amount, 0, damage_multiplier)
+	health.apply_all_modified_actions(modified_actions)
 
 
-## Calculates and applies healing to associated [Health].
-## Will apply damage to [Health] if `damage_on_heal` set to [color=orange]true[/color].
-func heal(amount: int) -> void:
-	if not health:
-		push_error("%s is missing a 'Health' component" % self)
-		return
-	
-	if roundi(amount * heal_multiplier) == 0:
-		return
-	
-	if damage_on_heal:
-		health.damage(amount, 0, heal_multiplier)
-		return
-	
-	health.heal(amount, 0, heal_multiplier)
+func _map_modified_action(action: HealthAction) -> HealthModifiedAction:
+	var modifier := _modifiers.get(action.type, HealthModifier.new()).duplicate() as HealthModifier
+	var modified_action := HealthModifiedAction.new(action, modifier)
+	return modified_action
 
 
 # Warn users if values haven't been configured.
