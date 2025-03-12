@@ -1,16 +1,16 @@
 @tool
-class_name HitScan3D extends RayCast3D
-## HitScan3D interacts with [HurtBox3D] to affect [Health] components.
+class_name BasicHitScan2D extends RayCast2D
+## BasicHitScan2D interacts with [BasicHurtBox2D] to affect [Health] components.
 
-## emitted when collision with [HitBox3D] detected.
-signal hit_box_entered(hit_box: HitBox3D)
-## emitted when collision with [HurtBox3D] detected.
-signal hurt_box_entered(hurt_box: HurtBox3D)
-## emitted after the action is applied to a [HurtBox3D].
-signal action_applied(hurt_box: HurtBox3D)
-## emitted when collision with [Area3D] that isn't [HitBox3D] or [HurtBox3D].
+## emitted when collision with [BasicHitBox2D] detected.
+signal hit_box_entered(hit_box: BasicHitBox2D)
+## emitted when collision with [BasicHurtBox2D] detected.
+signal hurt_box_entered(hurt_box: BasicHurtBox2D)
+## emitted after the action is applied to a [BasicHurtBox2D].
+signal action_applied(hurt_box: BasicHurtBox2D)
+## emitted when collision with [Area2D] that isn't [BasicHitBox2D] or [BasicHurtBox2D].
 ## Used to detect things like environment.
-signal unknown_area_entered(area: Area3D)
+signal unknown_area_entered(area: Area2D)
 
 
 ## [Modifer] applied to [HealthActionType.Enum].
@@ -59,24 +59,24 @@ func _set(property: StringName, value: Variant) -> bool:
 	return true
 
 
-## Detect collisions with [HurtBox3D] and apply appropriate action.
+## Detect collisions with [BasicHurtBox2D] and apply appropriate action.
 func fire() -> void:
 	var collider = _collider if _collider else get_collider()
 	if not collider:
 		return
 	
-	if collider is HitBox3D:
-		var hit_box: HitBox3D = collider
+	if collider is BasicHitBox2D:
+		var hit_box: BasicHitBox2D = collider
 		if hit_box.ignore_collisions:
 			return
 		hit_box_entered.emit(collider)
 		return
 	
-	if collider is not HurtBox3D:
+	if collider is not BasicHurtBox2D:
 		unknown_area_entered.emit(collider)
 		return
 	
-	var hurt_box: HurtBox3D = collider
+	var hurt_box: BasicHurtBox2D = collider
 	hurt_box_entered.emit(hurt_box)
 	hurt_box.apply_all_actions(_actions)
 	action_applied.emit(hurt_box)

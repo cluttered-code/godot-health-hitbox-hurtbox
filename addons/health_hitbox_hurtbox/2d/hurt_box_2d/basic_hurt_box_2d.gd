@@ -1,6 +1,6 @@
 @tool
-class_name HurtBox2D extends Area2D
-## HurtBox2D enables collision detection by [HitBox2D] or [HitScan2D] and applies affects to [Health].
+class_name BasicHurtBox2D extends Area2D
+## BasicHurtBox2D enables collision detection by [BasicHitBox2D] or [BasicHitScan2D] and applies affects to [Health].
 
 ## [Modifer] applied to [HealthActionType.Enum].
 var _modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {

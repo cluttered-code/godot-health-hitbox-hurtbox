@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://b2o7dxe0iarfj" path="res://tutorials/2d/enemy/enemy.gd" id="1_86q4j"]
 [ext_resource type="Script" uid="uid://dr8bvnfebp76" path="res://addons/health_hitbox_hurtbox/health/health.gd" id="1_ypmij"]
 [ext_resource type="Texture2D" uid="uid://b558ojjtwoyn2" path="res://tutorials/2d/enemy/enemy.png" id="2_mxoys"]
-[ext_resource type="Script" uid="uid://dtfoilkdcfvgv" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.gd" id="3_mxoys"]
+[ext_resource type="Script" uid="uid://dtfoilkdcfvgv" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/basic_hurt_box_2d.gd" id="3_mxoys"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_86q4j"]
 radius = 7.0
@@ -58,6 +58,7 @@ collision_layer = 128
 collision_mask = 0
 script = ExtResource("3_mxoys")
 health = NodePath("../Health")
+damage_multiplier = 4.0
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HeadHurtBox2D"]

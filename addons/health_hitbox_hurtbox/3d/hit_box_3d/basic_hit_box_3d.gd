@@ -1,15 +1,15 @@
-class_name HitBox2D extends Area2D
-## [HitBox2D] is associated with an object that can collide with a [HurtBox2D].
+class_name BasicHitBox3D extends Area3D
+## [BasicHitBox3D] is associated with an object that can collide with a [BasicHurtBox3D].
 
-## emitted when collision with [HitBox2D] detected.
-signal hit_box_entered(hit_box: HitBox2D)
-## emitted when collision with [HurtBox2D] detected.
-signal hurt_box_entered(hurt_box: HurtBox2D)
-## emitted after the action is applied to a [HurtBox2D].
-signal action_applied(hurt_box: HurtBox2D)
-## emitted when collision with [Area2D] that isn't [HitBox2D] or [HurtBox2D].
+## emitted when collision with [BasicHitBox3D] detected.
+signal hit_box_entered(hit_box: BasicHitBox3D)
+## emitted when collision with [BasicHurtBox3D] detected.
+signal hurt_box_entered(hurt_box: BasicHurtBox3D)
+## emitted after the action is applied to a [BasicHurtBox3D].
+signal action_applied(hurt_box: BasicHurtBox3D)
+## emitted when collision with [Area3D] that isn't [BasicHitBox3D] or [BasicHurtBox3D].
 ## Can be using to detect things like environment.
-signal unknown_area_entered(area: Area2D)
+signal unknown_area_entered(area: Area3D)
 
 
 ## [Modifer] applied to [HealthActionType.Enum].
@@ -45,20 +45,20 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 
-## Detect collisions with [HitBox2D] or [HurtBox2D] and apply appropriate action.
-func _on_area_entered(area: Area2D) -> void:
+## Detect collisions with [BasicHitBox3D] or [BasicHurtBox3D] and apply appropriate action.
+func _on_area_entered(area: Area3D) -> void:
 	if ignore_collisions:
 		return
 	
-	if area is HitBox2D:
+	if area is BasicHitBox3D:
 		hit_box_entered.emit(area)
 		return
 	
-	if area is not HurtBox2D:
+	if area is not BasicHurtBox3D:
 		unknown_area_entered.emit(area)
 		return
 	
-	var hurt_box: HurtBox2D = area
+	var hurt_box: BasicHurtBox3D = area
 	hurt_box_entered.emit(hurt_box)
 	hurt_box.apply_all_actions(_actions)
 	action_applied.emit(hurt_box)

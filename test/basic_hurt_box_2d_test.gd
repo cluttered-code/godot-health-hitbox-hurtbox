@@ -1,14 +1,14 @@
-class_name HurtBox3DTest extends GdUnitTestSuite
+class_name BasicHurtBox2DTest extends GdUnitTestSuite
 @warning_ignore('unused_parameter')
 @warning_ignore('return_value_discarded')
 
 var mock_health: Health
-var hurt_box: HurtBox3D
+var hurt_box: BasicHurtBox2D
 
 func before_test() -> void:
 	mock_health = auto_free(mock(Health))
 	
-	hurt_box = auto_free(HurtBox3D.new())
+	hurt_box = auto_free(BasicHurtBox2D.new())
 	hurt_box.health = mock_health
 	add_child(hurt_box)
 

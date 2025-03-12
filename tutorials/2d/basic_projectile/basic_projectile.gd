@@ -2,7 +2,7 @@ class_name BasicProjectile extends Node2D
 
 const SPEED: float = 250.0
 
-@onready var hit_box: HitBox2D = $HitBox2D
+@onready var hit_box: BasicHitBox2D = $BasicHitBox2D
 
 
 func _ready() -> void:
@@ -19,7 +19,7 @@ func destory() -> void:
 	queue_free()
 
 
-func _on_action_applied(_hurt_box: HurtBox2D) -> void:
+func _on_action_applied(_hurt_box: BasicHurtBox2D) -> void:
 	destory()
 
 
