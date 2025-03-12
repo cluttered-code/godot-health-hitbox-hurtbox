@@ -19,21 +19,39 @@ func _enter_tree() -> void:
 	# ==================
 	# Load 2D components
 	# ==================
+	if FileAccess.file_exists(addon_path % "2d/hit_box_2d/hit_box_2d.gd"):
+		hit_box_2d_added = true
+		add_custom_type("HitBox2D", "Area2D",
+			load(addon_path % "2d/hit_box_2d/hit_box_2d.gd"),
+			load(addon_path % "2d/hit_box_2d/hit_box_2d.svg"))
+	
+	if FileAccess.file_exists(addon_path % "2d/hit_scan_2d/hit_scan_2d.gd"):
+		hit_scan_2d_added = true
+		add_custom_type("HitScan2D", "RayCast2D",
+			load(addon_path % "2d/hit_scan_2d/hit_scan_2d.gd"),
+			load(addon_path % "2d/hit_scan_2d/hit_scan_2d.svg"))
+	
+	if FileAccess.file_exists(addon_path % "2d/hurt_box_2d/hurt_box_2d.gd"):
+		hurt_box_2d_added = true
+		add_custom_type("HurtBox2D", "Area2D",
+			load(addon_path % "2d/hurt_box_2d/hurt_box_2d.gd"),
+			load(addon_path % "2d/hurt_box_2d/hurt_box_2d.svg"))
+	
 	if FileAccess.file_exists(addon_path % "2d/hit_box_2d/basic_hit_box_2d.gd"):
 		hit_box_2d_added = true
-		add_custom_type("BasicHitBox2D", "Area2D",
+		add_custom_type("BasicHitBox2D", "HitBox2D",
 			load(addon_path % "2d/hit_box_2d/basic_hit_box_2d.gd"),
 			load(addon_path % "2d/hit_box_2d/hit_box_2d.svg"))
 	
 	if FileAccess.file_exists(addon_path % "2d/hit_scan_2d/basic_hit_scan_2d.gd"):
 		hit_scan_2d_added = true
-		add_custom_type("BasicHitScan2D", "RayCast2D",
+		add_custom_type("BasicHitScan2D", "HitScan2D",
 			load(addon_path % "2d/hit_scan_2d/basic_hit_scan_2d.gd"),
 			load(addon_path % "2d/hit_scan_2d/hit_scan_2d.svg"))
 	
 	if FileAccess.file_exists(addon_path % "2d/hurt_box_2d/basic_hurt_box_2d.gd"):
 		hurt_box_2d_added = true
-		add_custom_type("BasicHurtBox2D", "Area2D",
+		add_custom_type("BasicHurtBox2D", "HurtBox2D",
 			load(addon_path % "2d/hurt_box_2d/basic_hurt_box_2d.gd"),
 			load(addon_path % "2d/hurt_box_2d/hurt_box_2d.svg"))
 

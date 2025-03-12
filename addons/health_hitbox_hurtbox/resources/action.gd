@@ -10,3 +10,12 @@ func _init(affect: Health.Affect, type: HealthActionType.Enum, amount: int) -> v
 	self.affect = affect
 	self.type = type
 	self.amount = amount
+
+
+## clone because duplicate() doesn't work with _init() parameters
+func clone() -> HealthAction:
+	return HealthAction.new(affect, type, amount)
+
+
+func _to_string() -> String:
+	return "HealthAction<affect=%s type=%s amount=%d>" % [Health.Affect.find_key(affect), HealthActionType.Enum.find_key(type), amount]

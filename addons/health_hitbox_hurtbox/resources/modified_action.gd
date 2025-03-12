@@ -32,3 +32,13 @@ var multiplier: float:
 func _init(action: HealthAction, modifier: HealthModifier) -> void:
 	self.action = action
 	self.modifier = modifier
+
+
+
+## clone because duplicate() doesn't work with _init() parameters
+func clone() -> HealthModifiedAction:
+	return HealthModifiedAction.new(action, modifier)
+
+
+func _to_string() -> String:
+	return "HealthModifiedAction<%s %s>" % [action, modifier]

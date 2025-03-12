@@ -19,5 +19,12 @@ func _init(
 	self.convert_type = convert_type
 
 
-func duplicate(subresources: bool = false) -> HealthModifier:
+
+## clone because duplicate() doesn't work with _init() parameters
+func clone() -> HealthModifier:
 	return HealthModifier.new(incrementer, multiplier, convert_affect, convert_type)
+
+
+func _to_string() -> String:
+	return "HealthModifier<incrementer=%d multiplier=%0.4f convert_affect=%s conver_type=%s>"\
+		% [incrementer, multiplier, Health.Affect.find_key(convert_affect), HealthActionType.Enum.find_key(convert_type)]
