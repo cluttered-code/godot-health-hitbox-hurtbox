@@ -10,6 +10,7 @@ var signals: Object
 func before_test() -> void:
 	mock_hurt_box = mock(BasicHurtBox2D)
 	hit_scan = auto_free(BasicHitScan2D.new())
+	add_child(hit_scan)
 	signals = monitor_signals(hit_scan)
 
 

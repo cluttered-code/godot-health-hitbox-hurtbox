@@ -29,6 +29,7 @@ class_name BasicHurtBox2D extends HurtBox2D
 ## Applies damage to [Health] when [color=orange]heal()[/color] is called.
 @export var damage_on_heal: bool = false:
 	set(enable):
+		damage_on_heal = enable
 		if modifiers.has(HealthActionType.Enum.MEDICINE):
 			modifiers[HealthActionType.Enum.MEDICINE].convert_affect = _affect_damage_on_heal(enable)
 
