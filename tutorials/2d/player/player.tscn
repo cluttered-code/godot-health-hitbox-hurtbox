@@ -1,11 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://r81mddvlsa2"]
+[gd_scene load_steps=14 format=3 uid="uid://r81mddvlsa2"]
 
 [ext_resource type="Script" uid="uid://0bcvjs43dwu7" path="res://tutorials/2d/player/player.gd" id="1_2sim6"]
 [ext_resource type="Texture2D" uid="uid://5jt6bkcbjrr6" path="res://tutorials/2d/player/player_sprite_sheet.png" id="2_a0ea0"]
 [ext_resource type="Script" uid="uid://dr8bvnfebp76" path="res://addons/health_hitbox_hurtbox/health/health.gd" id="2_a4m6f"]
 [ext_resource type="Texture2D" uid="uid://6b127ag1088l" path="res://tutorials/2d/player/player_gun.png" id="3_7o41g"]
 [ext_resource type="Script" uid="uid://dtfoilkdcfvgv" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/basic_hurt_box_2d.gd" id="5_5603i"]
-[ext_resource type="Script" uid="uid://cobp4qehnuq77" path="res://addons/health_hitbox_hurtbox/resources/modifier.gd" id="6_61v8t"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7o41g"]
 atlas = ExtResource("2_a0ea0")
@@ -55,38 +54,8 @@ animations = [{
 radius = 7.0
 height = 18.0
 
-[sub_resource type="Resource" id="Resource_yoh81"]
-script = ExtResource("6_61v8t")
-incrementer = 0
-multiplier = 1.0
-convert_affect = 2
-convert_type = 0
-
-[sub_resource type="Resource" id="Resource_idk12"]
-script = ExtResource("6_61v8t")
-incrementer = 0
-multiplier = 2.0
-convert_affect = 1
-convert_type = 0
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_5603i"]
 radius = 5.0
-
-[sub_resource type="Resource" id="Resource_dx24q"]
-script = ExtResource("6_61v8t")
-incrementer = 0
-multiplier = 1.0
-convert_affect = 0
-convert_type = 0
-metadata/_custom_type_script = "uid://cobp4qehnuq77"
-
-[sub_resource type="Resource" id="Resource_04xm6"]
-script = ExtResource("6_61v8t")
-incrementer = 0
-multiplier = 1.0
-convert_affect = 0
-convert_type = 0
-metadata/_custom_type_script = "uid://cobp4qehnuq77"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a4m6f"]
 size = Vector2(10, 7)
@@ -128,10 +97,6 @@ collision_mask = 0
 script = ExtResource("5_5603i")
 damage_multiplier = 2.0
 health = NodePath("../Health")
-modifiers = Dictionary[int, ExtResource("6_61v8t")]({
-1: SubResource("Resource_yoh81"),
-2: SubResource("Resource_idk12")
-})
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="HeadBasicHurtBox2D"]
@@ -144,10 +109,6 @@ collision_layer = 16
 collision_mask = 0
 script = ExtResource("5_5603i")
 health = NodePath("../Health")
-modifiers = Dictionary[int, ExtResource("6_61v8t")]({
-1: SubResource("Resource_dx24q"),
-2: SubResource("Resource_04xm6")
-})
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BodyBasicHurtBox2D"]
