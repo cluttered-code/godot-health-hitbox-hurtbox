@@ -416,7 +416,7 @@ func test_heal_not_revivable() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted(SIG_ALREADY_FULL, [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_REVIVABLE, [test_character])
 	
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HEALED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
