@@ -6,7 +6,7 @@ class_name HealthAction extends Resource
 @export var amount: int = 1
 
 
-func _init(affect: Health.Affect, type: HealthActionType.Enum, amount: int) -> void:
+func _init(affect: Health.Affect = Health.Affect.DAMAGE, type: HealthActionType.Enum = HealthActionType.Enum.KINETIC, amount: int = 1) -> void:
 	self.affect = affect
 	self.type = type
 	self.amount = amount

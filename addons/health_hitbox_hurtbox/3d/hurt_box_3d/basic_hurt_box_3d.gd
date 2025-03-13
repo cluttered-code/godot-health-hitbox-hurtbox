@@ -1,76 +1,48 @@
 @tool
-class_name BasicHurtBox3D extends Area3D
-## BasicHurtBox3D enables collision detection by [BasicHitBox3D] or [BasicHitScan3D] and applies affects to [Health].
-
-## [Modifer] applied to [HealthActionType.Enum].
-var _modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {
-	HealthActionType.Enum.MEDICINE: HealthModifier.new(),
-	HealthActionType.Enum.KINETIC: HealthModifier.new()
-}
-
-## The [Health] component to affect.
-@export var health: Health = null:
-	set(new_health):
-		health = new_health
-		if Engine.is_editor_hint():
-			update_configuration_warnings()
+class_name BasicHurtBox3D extends HurtBox3D
+## [BasicHurtBox3D] enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
 
 ## The multiplier to apply to all damage actions.
 @export var damage_multiplier: float = 1.0:
-	get():
-		return _modifiers[HealthActionType.Enum.KINETIC].multiplier
 	set(mult):
-		_modifiers[HealthActionType.Enum.KINETIC].multiplier = mult
+		damage_multiplier = mult
+		if modifiers.has(HealthActionType.Enum.KINETIC):
+			modifiers[HealthActionType.Enum.KINETIC].multiplier = mult
 
 ## The multiplier to apply to all heal actions.
 @export var heal_multiplier: float = 1.0:
-	get():
-		return _modifiers[HealthActionType.Enum.MEDICINE].multiplier
 	set(mult):
-		_modifiers[HealthActionType.Enum.MEDICINE].multiplier = mult
+		heal_multiplier = mult
+		if modifiers.has(HealthActionType.Enum.MEDICINE):
+			modifiers[HealthActionType.Enum.MEDICINE].multiplier = mult
 
 @export_group("Advanced")
 
 ## Applies healing to [Health] when [color=orange]damage()[/color] is called.
 @export var heal_on_damage: bool = false:
-	get():
-		return _modifiers[HealthActionType.Enum.KINETIC].convert_affect == Health.Affect.HEAL
-	set(b):
-		_modifiers[HealthActionType.Enum.KINETIC].convert_affect = Health.Affect.HEAL if b else Health.Affect.DAMAGE
+	set(enable):
+		heal_on_damage = enable
+		if modifiers.has(HealthActionType.Enum.KINETIC):
+			modifiers[HealthActionType.Enum.KINETIC].convert_affect = _affect_heal_on_damage(enable)
+
 
 ## Applies damage to [Health] when [color=orange]heal()[/color] is called.
 @export var damage_on_heal: bool = false:
-	get():
-		return _modifiers[HealthActionType.Enum.MEDICINE].convert_affect == Health.Affect.DAMAGE
-	set(b):
-		_modifiers[HealthActionType.Enum.MEDICINE].convert_affect = Health.Affect.DAMAGE if b else Health.Affect.HEAL
+	set(enable):
+		damage_on_heal = enable
+		if modifiers.has(HealthActionType.Enum.MEDICINE):
+			modifiers[HealthActionType.Enum.MEDICINE].convert_affect = _affect_damage_on_heal(enable)
 
 
-func apply_all_actions(actions: Array[HealthAction]) -> void:
-	if not health:
-		push_error("%s is missing a 'Health' component" % self)
-		return
-	
-	var modified_actions: Array[HealthModifiedAction]
-	modified_actions.assign(
-		actions.filter(func(action: HealthAction) -> bool: return action != null)
-			.map(_map_modified_action)
-	)
-	
-	health.apply_all_modified_actions(modified_actions)
+
+func _ready() -> void:
+	modifiers[HealthActionType.Enum.KINETIC] = HealthModifier.new(0, damage_multiplier, _affect_heal_on_damage(heal_on_damage))
+	modifiers[HealthActionType.Enum.MEDICINE] = HealthModifier.new(0, heal_multiplier, _affect_damage_on_heal(damage_on_heal))
 
 
-func _map_modified_action(action: HealthAction) -> HealthModifiedAction:
-	var modifier := _modifiers.get(action.type, HealthModifier.new()).duplicate() as HealthModifier
-	var modified_action := HealthModifiedAction.new(action, modifier)
-	return modified_action
+func _affect_heal_on_damage(enabled: bool) -> Health.Affect:
+	return Health.Affect.HEAL if enabled else Health.Affect.NONE
 
 
-# Warn users if values haven't been configured.
-func _get_configuration_warnings() -> PackedStringArray:
-	var warnings := PackedStringArray()
-	
-	if health is not Health:
-		warnings.append("This node requires a 'Health' component")
-	
-	return warnings
+func _affect_damage_on_heal(enabled: bool) -> Health.Affect:
+	return Health.Affect.DAMAGE if enabled else Health.Affect.NONE

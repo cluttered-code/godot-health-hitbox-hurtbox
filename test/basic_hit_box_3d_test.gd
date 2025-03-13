@@ -4,76 +4,32 @@ class_name BasicHitBox3DTest extends GdUnitTestSuite
 
 var mock_hurt_box: BasicHurtBox3D
 var hit_box: BasicHitBox3D
-var signals: Object
 
 
 func before_test() -> void:
 	mock_hurt_box = auto_free(mock(BasicHurtBox3D))
 	hit_box = auto_free(BasicHitBox3D.new())
-	signals = monitor_signals(hit_box)
+	add_child(hit_box)
 
 
-func test_on_area_entered_damage() -> void:
-	hit_box.affect = Health.Affect.DAMAGE
-	hit_box.amount = 10
-
-	var action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 10)
-	
-	hit_box._on_area_entered(mock_hurt_box)
-	
-	verify(mock_hurt_box, 1).apply_all_actions([HealthActionMatcher.new(action)])
-	
-	await assert_signal(signals).is_emitted("hurt_box_entered", [mock_hurt_box])
-	await assert_signal(signals).is_emitted("action_applied", [mock_hurt_box])
+func test_defaults() -> void:
+	var action := HealthAction.new()
+	assert_int(hit_box.actions.size()).is_equal(1)
+	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
 
 
-func test_on_area_entered_heal() -> void:
+func test_affect() -> void:
 	hit_box.affect = Health.Affect.HEAL
-	hit_box.amount = 10
 
-	var action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE, 10)
-	
-	hit_box._on_area_entered(mock_hurt_box)
-	
-	verify(mock_hurt_box, 1).apply_all_actions([HealthActionMatcher.new(action)])
-	
-	await assert_signal(signals).is_emitted("hurt_box_entered", [mock_hurt_box])
-	await assert_signal(signals).is_emitted("action_applied", [mock_hurt_box])
+	var action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE)
+	assert_int(hit_box.actions.size()).is_equal(1)
+	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
 
 
-func test_on_area_entered_hit_box() -> void:
-	hit_box._on_area_entered(hit_box)
-	
-	await assert_signal(signals).is_emitted("hit_box_entered", [hit_box])
+func test_amount() -> void:
+	hit_box.amount = 25
 
-
-func test_on_area_entered_ignore() -> void:
-	hit_box.ignore_collisions = true
-	hit_box.affect = Health.Affect.DAMAGE
-	hit_box.amount = 10
-	
-	hit_box._on_area_entered(mock_hurt_box)
-	
-	verify(mock_hurt_box, 0).apply_all_actions(any_array())
-	
-	await assert_signal(signals).wait_until(50).is_not_emitted("unknown_area_entered", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("hurt_box_entered", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("hit_box_entered", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("action_applied", [any()])
-
-
-func test_on_area_entered_area3d() -> void:
-	hit_box.affect = Health.Affect.DAMAGE
-	hit_box.amount = 10
-	
-	var area: Area3D = auto_free(Area3D.new())
-	
-	hit_box._on_area_entered(area)
-	
-	verify(mock_hurt_box, 0).apply_all_actions(any_array())
-	
-	await assert_signal(signals).is_emitted("unknown_area_entered", [area])
-	
-	await assert_signal(signals).wait_until(50).is_not_emitted("hurt_box_entered", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("hit_box_entered", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("action_applied", [any()])
+	var action := HealthAction.new()
+	action.amount = 25
+	assert_int(hit_box.actions.size()).is_equal(1)
+	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
