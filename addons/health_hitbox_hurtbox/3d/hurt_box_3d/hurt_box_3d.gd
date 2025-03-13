@@ -1,6 +1,7 @@
 @tool
 class_name HurtBox3D extends Area3D
-## HurtBox3D enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
+## [HurtBox3D] enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
+
 
 ## The [Health] component to affect.
 @export var health: Health = null:
@@ -9,50 +10,29 @@ class_name HurtBox3D extends Area3D
 		if Engine.is_editor_hint():
 			update_configuration_warnings()
 
-## The multiplier to apply to all damage actions.
-@export var damage_multiplier: float = 1.0
-## The multiplier to apply to all heal actions.
-@export var heal_multiplier: float = 1.0
 
-@export_group("Advanced")
-## Applies healing to [Health] when [color=orange]damage()[/color] is called.
-@export var heal_on_damage: bool = false
-## Applies damage to [Health] when [color=orange]heal()[/color] is called.
-@export var damage_on_heal: bool = false
+## [Modifer] applied to [HealthActionType.Enum].
+@export var modifiers: Dictionary[HealthActionType.Enum, HealthModifier] = {}
 
 
-## Calculates and applies damage to associated [Health].
-## Will apply healing to [Health] if `heal_on_damage` set to [color=orange]true[/color].
-func damage(amount: int) -> void:
+func apply_all_actions(actions: Array[HealthAction]) -> void:
 	if not health:
 		push_error("%s is missing a 'Health' component" % self)
 		return
 	
-	if roundi(amount * damage_multiplier) == 0:
-		return
+	var modified_actions: Array[HealthModifiedAction]
+	modified_actions.assign(
+		actions.filter(func(action: HealthAction) -> bool: return action != null)
+			.map(_map_modified_action)
+	)
 	
-	if heal_on_damage:
-		health.heal(amount, damage_multiplier)
-		return
-	
-	health.damage(amount, damage_multiplier)
+	health.apply_all_modified_actions(modified_actions)
 
 
-## Calculates and applies healing to associated [Health].
-## Will apply damage to [Health] if `damage_on_heal` set to [color=orange]true[/color].
-func heal(amount: int) -> void:
-	if not health:
-		push_error("%s is missing a 'Health' component" % self)
-		return
-	
-	if roundi(amount * heal_multiplier) == 0:
-		return
-	
-	if damage_on_heal:
-		health.damage(amount, heal_multiplier)
-		return
-	
-	health.heal(amount, heal_multiplier)
+func _map_modified_action(action: HealthAction) -> HealthModifiedAction:
+	var modifier := modifiers.get(action.type, HealthModifier.new())
+	var modified_action := HealthModifiedAction.new(action, modifier.clone())
+	return modified_action
 
 
 # Warn users if values haven't been configured.

@@ -1,6 +1,6 @@
 @tool
 class_name HitScan3D extends RayCast3D
-## HitScan3D interacts with [HurtBox3D] to affect [Health] components.
+## [HitScan3D] interacts with [HurtBox3D] to affect [Health] components.
 
 ## emitted when collision with [HitBox3D] detected.
 signal hit_box_entered(hit_box: HitBox3D)
@@ -13,10 +13,8 @@ signal action_applied(hurt_box: HurtBox3D)
 signal unknown_area_entered(area: Area3D)
 
 
-## The [Health.Action] to be performed.
-@export var action: Health.Action = Health.Action.DAMAGE
-## The amount of the action.
-@export var amount: int = 1
+## [Modifer] applied to [HealthActionType.Enum].
+@export var actions: Array[HealthAction] = []
 
 # Here for testing, can't mock native node functions
 var _collider: Node
@@ -53,6 +51,7 @@ func fire() -> void:
 		var hit_box: HitBox3D = collider
 		if hit_box.ignore_collisions:
 			return
+		
 		hit_box_entered.emit(collider)
 		return
 	
@@ -62,14 +61,5 @@ func fire() -> void:
 	
 	var hurt_box: HurtBox3D = collider
 	hurt_box_entered.emit(hurt_box)
-	_apply_action(hurt_box)
+	hurt_box.apply_all_actions(actions)
 	action_applied.emit(hurt_box)
-
-
-## Perfomes the [Health.Action] on the specified [HurtBox3D].
-func _apply_action(hurt_box: HurtBox3D) -> void:
-	match action:
-		Health.Action.DAMAGE:
-			hurt_box.damage(amount)
-		Health.Action.HEAL:
-			hurt_box.heal(amount)

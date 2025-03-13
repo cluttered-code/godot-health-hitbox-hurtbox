@@ -4,6 +4,20 @@ class_name HealthTest extends GdUnitTestSuite
 
 const test_character_scene: PackedScene = preload("res://test/scenes/test_character.tscn")
 
+const SIG_DAMAGED := "damaged"
+const SIG_DIED := "died"
+const SIG_HEALED := "healed"
+const SIG_REVIVED := "revived"
+const SIG_ACTION_APPLIED := "action_applied"
+const SIG_FIRST_HIT := "first_hit"
+const SIG_NOT_DAMAGEABLE := "not_damageable"
+const SIG_ALREADY_DEAD := "already_dead"
+const SIG_NOT_KILLABLE := "not_killable"
+const SIG_NOT_HEALABLE := "not_healable"
+const SIG_FULL := "full"
+const SIG_ALREADY_FULL := "already_full"
+const SIG_NOT_REVIVABLE := "not_revivable"
+
 var test_character: CharacterBody2D
 var health: Health
 var signals: Object
@@ -140,26 +154,66 @@ func test_damage() -> void:
 	health.damage(20)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 30)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, 20, 20, 1.0])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, 20, 0, 1.0, 20])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 20])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("first_hit", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
+
+
+func test_apply_action() -> void:
+	health.current -= 10
+	
+	var action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 15)
+	
+	health.apply_action(action)
+	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 25)
+	
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 15, 0, 1.0, 15])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 15])
+	
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
+
+
+func test_apply_modified_action() -> void:
+	health.current -= 10
+	
+	var action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 4)
+	var modifier := HealthModifier.new(1, 2.0)
+	var modified_action := HealthModifiedAction.new(action, modifier)
+	
+	health.apply_modified_action(modified_action)
+	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 20)
+	
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 4, 1, 2.0, 10])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 10])
+	
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_first_hit() -> void:
 	health.damage(42)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 42)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, 42, 42, 1.0])
-	await assert_signal(signals).is_emitted("first_hit", [test_character])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, 42, 0, 1.0, 42])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 42])
+	await assert_signal(signals).is_emitted(SIG_FIRST_HIT, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_death() -> void:
@@ -167,13 +221,14 @@ func test_damage_death() -> void:
 	health.damage(Health.DEFAULT_MAX)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, Health.DEFAULT_MAX, 90, 1.0])
-	await assert_signal(signals).is_emitted("died", [test_character])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, Health.DEFAULT_MAX, 0, 1.0, 90])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 90])
+	await assert_signal(signals).is_emitted(SIG_DIED, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("first_hit", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_already_dead() -> void:
@@ -181,27 +236,28 @@ func test_damage_already_dead() -> void:
 	health.damage(10)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("already_dead", [test_character])
+	await assert_signal(signals).is_emitted(SIG_ALREADY_DEAD, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("damaged", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("first_hit", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DAMAGED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_one_shot() -> void:
 	health.damage(Health.DEFAULT_MAX)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, Health.DEFAULT_MAX, Health.DEFAULT_MAX, 1.0])
-	await assert_signal(signals).is_emitted("first_hit", [test_character])
-	await assert_signal(signals).is_emitted("died", [test_character])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, Health.DEFAULT_MAX, 0, 1.0, Health.DEFAULT_MAX])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), Health.DEFAULT_MAX])
+	await assert_signal(signals).is_emitted(SIG_FIRST_HIT, [test_character])
+	await assert_signal(signals).is_emitted(SIG_DIED, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_not_damageable() -> void:
@@ -209,13 +265,14 @@ func test_damage_not_damageable() -> void:
 	health.damage(Health.DEFAULT_MAX)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX)
 	
-	await assert_signal(signals).is_emitted("not_damageable", [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_DAMAGEABLE, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("damaged", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("first_hit", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DAMAGED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ACTION_APPLIED, [any(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_not_killable() -> void:
@@ -223,13 +280,14 @@ func test_damage_not_killable() -> void:
 	health.damage(10)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 10)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, 10, 10, 1.0])
-	await assert_signal(signals).is_emitted("first_hit", [test_character])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, 10, 0, 1.0, 10])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 10])
+	await assert_signal(signals).is_emitted(SIG_FIRST_HIT, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_damage_kill_not_killable() -> void:
@@ -238,26 +296,28 @@ func test_damage_kill_not_killable() -> void:
 	health.damage(10)
 	assert_int(health.current).is_equal(10)
 	
-	await assert_signal(signals).is_emitted("not_killable", [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_KILLABLE, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("damaged", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("first_hit", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("died", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DAMAGED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ACTION_APPLIED, [any(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
 
 
 func test_kill() -> void:
 	health.kill()
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("damaged", [test_character, Health.DEFAULT_MAX, Health.DEFAULT_MAX, 1.0])
-	await assert_signal(signals).is_emitted("first_hit", [test_character])
-	await assert_signal(signals).is_emitted("died", [test_character])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.NONE, Health.DEFAULT_MAX, 0, 1.0, Health.DEFAULT_MAX])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), Health.DEFAULT_MAX])
+	await assert_signal(signals).is_emitted(SIG_FIRST_HIT, [test_character])
+	await assert_signal(signals).is_emitted(SIG_DIED, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_dead", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_damageable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_killable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
 
 
 func test_heal() -> void:
@@ -265,40 +325,43 @@ func test_heal() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(11)
 	
-	await assert_signal(signals).is_emitted("healed", [test_character, 10, 10, 1.0])
+	await assert_signal(signals).is_emitted(SIG_HEALED, [test_character, HealthActionType.Enum.NONE, 10, 0, 1.0, 10])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 10])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_healable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_full() -> void:
 	health.current -= 10
-	health.heal(10)
+	health.heal(20)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX)
 	
-	await assert_signal(signals).is_emitted("healed", [test_character, 10, 10, 1.0])
-	await assert_signal(signals).is_emitted("full", [test_character])
+	await assert_signal(signals).is_emitted(SIG_HEALED, [test_character, HealthActionType.Enum.NONE, 20, 0, 1.0, 10])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 10])
+	await assert_signal(signals).is_emitted(SIG_FULL, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_healable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_already_full() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(Health.DEFAULT_MAX)
 	
-	await assert_signal(signals).is_emitted("already_full", [test_character])
+	await assert_signal(signals).is_emitted(SIG_ALREADY_FULL, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("healed", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_healable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HEALED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ACTION_APPLIED, [any(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_revive() -> void:
@@ -306,13 +369,14 @@ func test_heal_revive() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(10)
 	
-	await assert_signal(signals).is_emitted("healed", [test_character, 10, 10, 1.0])
-	await assert_signal(signals).is_emitted("revived", [test_character])
+	await assert_signal(signals).is_emitted(SIG_HEALED, [test_character, HealthActionType.Enum.NONE, 10, 0, 1.0, 10])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 10])
+	await assert_signal(signals).is_emitted(SIG_REVIVED, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_healable", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_not_healable() -> void:
@@ -321,13 +385,14 @@ func test_heal_not_healable() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(1)
 	
-	await assert_signal(signals).is_emitted("not_healable", [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_HEALABLE, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("healed", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HEALED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ACTION_APPLIED, [any(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_not_healable_and_dead() -> void:
@@ -336,13 +401,13 @@ func test_heal_not_healable_and_dead() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("not_healable", [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_HEALABLE, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("healed", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_revivable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HEALED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 
 
 func test_heal_not_revivable() -> void:
@@ -351,10 +416,10 @@ func test_heal_not_revivable() -> void:
 	health.heal(10)
 	assert_int(health.current).is_equal(0)
 	
-	await assert_signal(signals).is_emitted("not_revivable", [test_character])
+	await assert_signal(signals).is_emitted(SIG_NOT_REVIVABLE, [test_character])
 	
-	await assert_signal(signals).wait_until(50).is_not_emitted("healed", [any(), any_int(), any_int(), any_float()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("revived", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("already_full", [any()])
-	await assert_signal(signals).wait_until(50).is_not_emitted("not_healable", [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HEALED, [any(), any_int(), any_int(), any_int(), any_float(), any_int()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_REVIVED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])

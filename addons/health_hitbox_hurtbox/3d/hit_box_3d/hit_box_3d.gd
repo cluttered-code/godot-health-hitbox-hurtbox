@@ -1,3 +1,4 @@
+@tool
 class_name HitBox3D extends Area3D
 ## [HitBox3D] is associated with an object that can collide with a [HurtBox3D].
 
@@ -12,16 +13,15 @@ signal action_applied(hurt_box: HurtBox3D)
 signal unknown_area_entered(area: Area3D)
 
 
-## The [Health.Action] to be performed.
-@export var action: Health.Action = Health.Action.DAMAGE
-## The amount of the action.
-@export var amount: int = 1
 ## Ignore collisions when [color=orange]true[/color].[br]
 ## Set this to [color=orange]true[/color] after a collision is detected to avoid
 ## further collisions.[br]
 ## It is recommended to set this to [color=orange]true[/color] before calling
 ## [color=orange]queue_free()[/color] to avoid further collisions.
 @export var ignore_collisions: bool
+
+## [Modifer] applied to [HealthActionType.Enum].
+@export var actions: Array[HealthAction] = []
 
 
 func _ready() -> void:
@@ -40,17 +40,21 @@ func _on_area_entered(area: Area3D) -> void:
 	if area is not HurtBox3D:
 		unknown_area_entered.emit(area)
 		return
-	
+
 	var hurt_box: HurtBox3D = area
 	hurt_box_entered.emit(hurt_box)
-	_apply_action(hurt_box)
+	var cloned_actions := _clone_actions()
+	hurt_box.apply_all_actions(cloned_actions)
 	action_applied.emit(hurt_box)
 
 
-## Perfomes the [Health.Action] on the specified [HurtBox3D].
-func _apply_action(hurt_box: HurtBox3D) -> void:
-	match action:
-		Health.Action.DAMAGE:
-			hurt_box.damage(amount)
-		Health.Action.HEAL:
-			hurt_box.heal(amount)
+func _clone_actions() -> Array[HealthAction]:
+	var dup: Array[HealthAction]
+	dup.assign(
+		actions.map(
+			func(action: HealthAction) -> HealthAction: return action.clone()
+		)
+	)
+
+	return dup
+

@@ -4,96 +4,50 @@ class_name HurtBox3DTest extends GdUnitTestSuite
 
 var mock_health: Health
 var hurt_box: HurtBox3D
-
+var kinetic_modifier: HealthModifier
+var medicine_modifier: HealthModifier
 
 func before_test() -> void:
 	mock_health = auto_free(mock(Health))
+
+	kinetic_modifier = HealthModifier.new(1, 2.0, Health.Affect.HEAL)
+	medicine_modifier = HealthModifier.new(0, 1.0, Health.Affect.HEAL, HealthActionType.Enum.KINETIC)
+	
 	hurt_box = auto_free(HurtBox3D.new())
 	hurt_box.health = mock_health
+	hurt_box.modifiers[HealthActionType.Enum.KINETIC] = kinetic_modifier
+	hurt_box.modifiers[HealthActionType.Enum.MEDICINE] = medicine_modifier
 	add_child(hurt_box)
 
 
-func test_damage() -> void:
-	hurt_box.damage(10)
-	
-	verify(mock_health, 1).damage(10)
+func test_kinetic_action() -> void:
+	var action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 10)
+	var modified_action := HealthModifiedAction.new(action, kinetic_modifier)
+
+	hurt_box.apply_all_actions([action])
+
+	verify(mock_health, 1).apply_all_modified_actions([HealthModifiedActionMatcher.new(modified_action)])
 
 
-func test_damage_modifier() -> void:
-	hurt_box.damage_multiplier = 1.5
-	hurt_box.damage(10)
-	
-	verify(mock_health, 1).damage(10, 1.5)
+func test_medecine_action() -> void:
+	var action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE, 10)
+	var modified_action := HealthModifiedAction.new(action, medicine_modifier)
+
+	hurt_box.apply_all_actions([action])
+
+	verify(mock_health, 1).apply_all_modified_actions([HealthModifiedActionMatcher.new(modified_action)])
 
 
-func test_damage_no_health() -> void:
-	hurt_box.health = null
-	
-	await assert_error(func(): hurt_box.damage(10))\
-			.is_push_error("%s is missing a 'Health' component" % hurt_box)
-	
-	verify_no_interactions(mock_health)
+func test_kinetic_and_medecine_actions() -> void:
+	var k_action := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 10)
+	var k_modified_action := HealthModifiedAction.new(k_action, kinetic_modifier)
 
+	var h_action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE, 10)
+	var h_modified_action := HealthModifiedAction.new(h_action, medicine_modifier)
 
-func test_damage_modifier_zero() -> void:
-	hurt_box.damage_multiplier = 0.0
-	hurt_box.damage(10)
-	
-	verify_no_interactions(mock_health)
+	hurt_box.apply_all_actions([k_action, h_action])
 
-
-func test_damage_negative_modifier() -> void:
-	hurt_box.damage_multiplier = -1.0
-	hurt_box.damage(10)
-	
-	verify(mock_health, 1).damage(10, -1.0)
-
-
-func test_heal_on_damage() -> void:
-	hurt_box.heal_on_damage = true
-	hurt_box.damage(10)
-	
-	verify(mock_health, 1).heal(10, 1.0)
-
-
-func test_heal() -> void:
-	hurt_box.heal(10)
-	
-	verify(mock_health, 1).heal(10)
-
-
-func test_heal_modifier() -> void:
-	hurt_box.heal_multiplier = 2.4
-	hurt_box.heal(10)
-	
-	verify(mock_health, 1).heal(10, 2.4)
-
-
-func test_heal_no_health() -> void:
-	hurt_box.health = null
-	
-	await assert_error(func(): hurt_box.heal(10))\
-			.is_push_error("%s is missing a 'Health' component" % hurt_box)
-	
-	verify_no_interactions(mock_health)
-
-
-func test_heal_modifier_zero() -> void:
-	hurt_box.heal_multiplier = 0.0
-	hurt_box.heal(10)
-	
-	verify_no_interactions(mock_health)
-
-
-func test_heal_negative_modifier() -> void:
-	hurt_box.heal_multiplier = -1.0
-	hurt_box.heal(10)
-	
-	verify(mock_health, 1).heal(10, -1.0)
-
-
-func test_damage_on_heal() -> void:
-	hurt_box.damage_on_heal = true
-	hurt_box.heal(10)
-	
-	verify(mock_health, 1).damage(10)
+	verify(mock_health, 1).apply_all_modified_actions([
+		HealthModifiedActionMatcher.new(k_modified_action),
+		HealthModifiedActionMatcher.new(h_modified_action)
+	])
