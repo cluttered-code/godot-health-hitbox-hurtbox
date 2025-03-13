@@ -9,6 +9,11 @@
 [![Live Example](https://img.shields.io/badge/Live_Example-itch.io-fa5c5c)](https://cluttered-code.itch.io/godot-health-hitbox-hurtbox-hitscan)
 [![ko-fi](https://img.shields.io/badge/Support%20on-ko--fi-ff5e5b?logo=ko-fi)](https://ko-fi.com/clutteredcode)
 
+> [!CAUTION]
+> A lot changed in v5.0.0. It is recommended to update to v4.4.0 before going to v5.0.0 to avoid issues with component name changes. We're working hard to update the documentation.
+> The components in the documentation are all now prefixed with "Basic". We added more complex variants to allow for multiple damage types and modifiers.[br]
+> Thank for the support!
+
 ## Documentation
 
 Check out the [Wiki](https://github.com/cluttered-code/godot-health-hitbox-hurtbox/wiki) for Documentation and tutorials!
