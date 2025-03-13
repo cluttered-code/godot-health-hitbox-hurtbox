@@ -11,7 +11,7 @@
 
 > [!CAUTION]
 > A lot changed in v5.0.0. It is recommended to update to v4.4.0 before going to v5.0.0 to avoid issues with component name changes. We're working hard to update the documentation.
-> The components in the documentation are all now prefixed with "Basic". We added more complex variants to allow for multiple damage types and modifiers.[br]
+> The components in the documentation are all now prefixed with "Basic". We added more complex variants to allow for multiple damage types and modifiers.
 > Thank for the support!
 
 ## Documentation
