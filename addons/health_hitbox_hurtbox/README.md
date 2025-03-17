@@ -41,19 +41,19 @@ flowchart LR
 
 `HurtBox2D` and `HurtBox3D` components require a `Collision Shape` so it can be detected and is assigned a ![Health](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/health/health.svg) `Health` component to apply damage and healing when hit.
 
-![HurtBox2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/hurtbox_inspector.png "HurtBox2D Inspector")
+![HurtBox2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/basic_hurt_box_2d_inspector.png "HurtBox2D Inspector")
 
 ## ![HitBox2D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/2d/hit_box_2d/hit_box_2d.svg) Hitbox ![HitBox3D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/3d/hit_box_3d/hit_box_3d.svg)
 
  `HitBox2D` and `HitBox3D` components require a `Collision Shape` to detect collisions with a ![HurtBox2D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.svg) `HurtBox2D` or ![HurtBox3D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/3d/hurt_box_3d/hurt_box_3d.svg) `HurtBox3D` to apply `DAMAGE` or `HEAL`.
 
-![HitBox2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/hitbox_inspector.png "HitBox2D Inspector")
+![HitBox2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/basic_hit_box_2d_inspector.png "HitBox2D Inspector")
 
 ## ![HitScan2D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/2d/hit_scan_2d/hit_scan_2d.svg) HitScan ![HitScan3D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/3d/hit_scan_3d/hit_scan_3d.svg)
 
 `HitScan2D` and `HitScan3D` components extend `RayCast2D` and `RayCast3D` to detect collisions with a ![Hurtbox2D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.svg) `HurtBox2D` or ![Hurtbox3D](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/addons/health_hitbox_hurtbox/3d/hurt_box_3d/hurt_box_3d.svg) `HurtBox3D` to apply `DAMAGE` or `HEAL`.
 
-![HitScan2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/hitscan_inspector.png "HitScan2D Inspector")
+![HitScan2D Inspector](https://raw.githubusercontent.com/cluttered-code/godot-health-hitbox-hurtbox/refs/heads/main/images/basic_hit_scan_2d_inspector.png "HitScan2D Inspector")
 
 ## Live Example Demonstration
 

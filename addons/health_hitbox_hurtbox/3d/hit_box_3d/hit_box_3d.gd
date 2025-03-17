@@ -57,4 +57,3 @@ func _clone_actions() -> Array[HealthAction]:
 	)
 
 	return dup
-
