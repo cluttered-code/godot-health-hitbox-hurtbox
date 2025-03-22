@@ -2,5 +2,5 @@
 * text=auto eol=lf
 
 # Only include the addons specific plugin folder when downloading from the Asset Library.
-/**                              export-ignore
+/**         export-ignore
 /addons/** !export-ignore
