@@ -3,4 +3,4 @@
 
 # Only include the addons specific plugin folder when downloading from the Asset Library.
 /**                              export-ignore
-/addons/health_hitbox_hurtbox/** !export-ignore
+/addons/** !export-ignore
