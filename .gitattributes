@@ -2,6 +2,7 @@
 * text=auto eol=lf
 
 # Only include the addons specific plugin folder when downloading from the Asset Library.
-/**         export-ignore
-/addons    !export-ignore
-/addons/** !export-ignore
+/**                               export-ignore
+/addons                          !export-ignore
+/addons/health_hitbox_hurtbox    !export-ignore
+/addons/health_hitbox_hurtbox/** !export-ignore
