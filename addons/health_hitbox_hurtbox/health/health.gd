@@ -118,7 +118,8 @@ func fill(type: HealthActionType.Enum = HealthActionType.Enum.NONE) -> void:
 
 ## Apply all the [HealthAction] objects in the arary.
 func apply_all_actions(actions: Array[HealthAction]) -> void:
-	actions.all(apply_action)
+	for action in actions:
+		apply_action(action)
 
 
 ## Apply the specified [HealthAction].
@@ -129,7 +130,8 @@ func apply_action(action: HealthAction) -> void:
 
 ## Apply all the [HealthModifiedAction] objects in the arary.
 func apply_all_modified_actions(actions: Array[HealthModifiedAction]) -> void:
-	actions.all(apply_modified_action)
+	for action in actions:
+		apply_modified_action(action)
 
 
 ## Apply the specified [HealthModifiedAction].
