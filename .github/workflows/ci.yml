@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        godot-version: ['4.4']
+        godot-version: ['4.4', '4.4.1']
 
     steps:
       - name: Checkout Repository
@@ -44,7 +44,7 @@ jobs:
           lfs: true
 
       - name: Run GDUnit4 Tests
-        uses: MikeSchulze/gdunit4-action@v1.1.5
+        uses: MikeSchulze/gdunit4-action@v1.1.6
         with:
           version: "installed"
           godot-version: ${{ matrix.godot-version }}
