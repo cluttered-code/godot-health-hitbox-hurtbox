@@ -1,3 +1,4 @@
+@icon("res://addons/health_hitbox_hurtbox/2d/hit_scan_2d/hit_scan_2d.svg")
 class_name AbstractHitScan2D extends RayCast2D
 ## [AbstractHitScan2D] interacts with [AbstractHurtBox2D] to affect [Health] components
 

@@ -1,3 +1,4 @@
+@icon("res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/hurt_box_2d.svg")
 class_name AbstractHurtBox2D extends Area2D
 ## [AbstractHurtBox2D] enables collision detection by [AbstractHitBox2D] or [AbstractHitScan2D] and applies affects to [Health].
 
