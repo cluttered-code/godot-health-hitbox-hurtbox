@@ -34,7 +34,7 @@ func _filter_null_actions(action: HealthAction) -> bool:
 
 func _map_modified_action(action: HealthAction) -> HealthModifiedAction:
 	var modifier := _modifiers.get(action.type, HealthModifier.new())
-	var modified_action := HealthModifiedAction.new(action, modifier.clone())
+	var modified_action := HealthModifiedAction.new(action, modifier.duplicate())
 	return modified_action
 
 
