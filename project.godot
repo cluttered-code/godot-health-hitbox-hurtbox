@@ -12,8 +12,9 @@ config_version=5
 
 config/name="Health, Hitboxes, HurtBoxes, and HitScans"
 config/version="1.0.0"
+config/tags=PackedStringArray("plugin")
 run/main_scene="uid://dd1whdx3ps7c7"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://images/addon_icon.png"
 
 [display]
@@ -27,7 +28,7 @@ window/stretch/mode="viewport"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg", "res://addons/health_hitbox_hurtbox/plugin.cfg")
+enabled=PackedStringArray("res://addons/health_hitbox_hurtbox/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
 [global_group]
 

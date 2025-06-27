@@ -95,8 +95,8 @@ shape = SubResource("CapsuleShape2D_7pnu4")
 collision_layer = 16
 collision_mask = 0
 script = ExtResource("5_5603i")
-damage_multiplier = 2.0
 health = NodePath("../Health")
+damage_multiplier = 2.0
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="HeadBasicHurtBox2D"]
