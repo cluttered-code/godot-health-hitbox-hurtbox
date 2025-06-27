@@ -6,7 +6,7 @@ const SPEED: float = 250.0
 
 
 func _ready() -> void:
-	hit_box.action_applied.connect(_on_action_applied)
+	hit_box.actions_applied.connect(_on_actions_applied)
 	hit_box.body_entered.connect(_on_body_entered)
 
 
@@ -19,7 +19,7 @@ func destory() -> void:
 	queue_free()
 
 
-func _on_action_applied(_hurt_box: BasicHurtBox2D) -> void:
+func _on_actions_applied(_hurt_box: BasicHurtBox2D) -> void:
 	destory()
 
 

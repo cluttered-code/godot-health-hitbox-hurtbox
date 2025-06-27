@@ -18,8 +18,8 @@ signal tree_view_mode_changed(flat :bool)
 @onready var _button_failure_up: Button = %btn_failure_up
 @onready var _button_failure_down: Button = %btn_failure_down
 @onready var _button_sync: Button = %btn_tree_sync
-@onready var _button_view_mode: Button = %btn_tree_mode
-@onready var _button_sort_mode: Button = %btn_tree_sort
+@onready var _button_view_mode: MenuButton = %btn_tree_mode
+@onready var _button_sort_mode: MenuButton = %btn_tree_sort
 
 @onready var _icon_errors: TextureRect = %icon_errors
 @onready var _icon_failures: TextureRect = %icon_failures
@@ -133,20 +133,12 @@ func _on_gdunit_event(event: GdUnitEvent) -> void:
 			total_errors = 0
 			total_flaky = 0
 			status_changed(0, 0, 0)
-		GdUnitEvent.TESTCASE_BEFORE:
-			pass
-		GdUnitEvent.TESTCASE_STATISTICS:
-			if event.is_error():
-				status_changed(event.error_count(), 0, event.is_flaky())
-			else:
-				status_changed(0, event.failed_count(), event.is_flaky())
-		GdUnitEvent.TESTSUITE_BEFORE:
-			pass
-		GdUnitEvent.TESTSUITE_AFTER:
-			if event.is_error():
-				status_changed(event.error_count(), 0, 0)
-			else:
-				status_changed(0, event.failed_count(), 0)
+
+		GdUnitEvent.TESTCASE_AFTER:
+			status_changed(event.error_count(), event.failed_count(),  event.is_flaky())
+
+		#GdUnitEvent.TESTSUITE_AFTER:
+		#	status_changed(event.error_count(), event.failed_count(),  event.is_flaky())
 
 
 func _on_btn_error_up_pressed() -> void:
