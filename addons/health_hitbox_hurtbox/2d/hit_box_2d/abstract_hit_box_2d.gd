@@ -5,9 +5,9 @@ class_name AbstractHitBox2D extends Area2D
 ## Emitted when collision with [AbstractHitBox2D] detected.
 signal hit_box_entered(hit_box: AbstractHitBox2D)
 ## Emitted when collision with [AbstractHurtBox2D] detected.
-signal hurt_box_entered(hurt_box: HurtBox2D)
+signal hurt_box_entered(hurt_box: AbstractHurtBox2D)
 ## Emitted after the action is applied to a [AbstractHurtBox2D].
-signal action_applied(hurt_box: HurtBox2D)
+signal actions_applied(hurt_box: AbstractHurtBox2D)
 ## Emitted when collision with [Area2D] that isn't [AbstractHitBox2D] or [AbstractHurtBox2D].
 ## Can be using to detect things like environment.
 signal unknown_area_entered(area: Area2D)
@@ -36,13 +36,17 @@ func _on_area_entered(area: Area2D) -> void:
 		hit_box_entered.emit(area)
 		return
 	
-	if area is not HurtBox2D:
+	if area is not AbstractHurtBox2D:
 		unknown_area_entered.emit(area)
 		return
 	
-	var hurt_box: HurtBox2D = area
+	var hurt_box: AbstractHurtBox2D = area
 	hurt_box_entered.emit(area)
+	
 	# FIX in godot 4.5: var dup_actions := _actions.duplicate_deep()
-	var dup_actions: Array[HealthAction] = Utils.array_duplicate_deep(_actions)
+	var dup_actions: Array[HealthAction]
+	dup_actions.assign(Utils.array_duplicate_deep(_actions))
+	# ################################
+	
 	hurt_box.apply_all_actions(dup_actions)
-	action_applied.emit(hurt_box)
+	actions_applied.emit(hurt_box)
