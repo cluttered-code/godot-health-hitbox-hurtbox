@@ -423,3 +423,55 @@ func test_heal_not_revivable() -> void:
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FULL, [any()])
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_FULL, [any()])
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_HEALABLE, [any()])
+
+
+func test_apply_all_action() -> void:
+	health.current -= 10
+	
+	
+	var action1 := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 15)
+	var action2 := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 20)
+	
+	var actions: Array[HealthAction] = [action1, action2]
+	
+	health.apply_all_actions(actions)
+	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 45)
+	
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 15, 0, 1.0, 15])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 15])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 20, 0, 1.0, 20])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 20])
+	
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
+
+
+func test_apply_all_modified_action() -> void:
+	health.current -= 10
+	
+	var action1 := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 15)
+	var modifier1 := HealthModifier.new(5, 1.0)
+	var modified_action1 := HealthModifiedAction.new(action1, modifier1)
+	
+	var action2 := HealthAction.new(Health.Affect.DAMAGE, HealthActionType.Enum.KINETIC, 10)
+	var modifier2 := HealthModifier.new(0, 0.5)
+	var modified_action2 := HealthModifiedAction.new(action2, modifier2)
+	
+	var actions: Array[HealthModifiedAction] = [modified_action1, modified_action2]
+	
+	health.apply_all_modified_actions(actions)
+	assert_int(health.current).is_equal(Health.DEFAULT_MAX - 35)
+	
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 15, 5, 1.0, 20])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 20])
+	await assert_signal(signals).is_emitted(SIG_DAMAGED, [test_character, HealthActionType.Enum.KINETIC, 10, 0, 0.5, 5])
+	await assert_signal(signals).is_emitted(SIG_ACTION_APPLIED, [any(), 5])
+	
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_FIRST_HIT, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_DIED, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ALREADY_DEAD, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_DAMAGEABLE, [any()])
+	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_NOT_KILLABLE, [any()])
