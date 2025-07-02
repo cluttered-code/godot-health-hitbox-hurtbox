@@ -13,6 +13,7 @@ signal actions_applied(hurt_box: AbstractHurtBox3D)
 ## Can be using to detect things like environment.
 signal unknown_area_entered(area: Area3D)
 
+
 ## Ignore collisions when [color=orange]true[/color].[br]
 ## Set this to [color=orange]true[/color] after a collision is detected to avoid
 ## further collisions.[br]

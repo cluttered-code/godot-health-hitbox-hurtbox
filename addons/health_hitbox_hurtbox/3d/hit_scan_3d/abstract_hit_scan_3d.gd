@@ -2,6 +2,7 @@
 class_name AbstractHitScan3D extends RayCast3D
 ## [AbstractHitScan3D] interacts with [AbstractHurtBox3D] to affect [Health] components
 
+
 ## emitted when collision with [AbstractHitBox3D] detected.
 signal hit_box_entered(hit_box: AbstractHitBox3D)
 ## emitted when collision with [AbstractHurtBox3D] detected.

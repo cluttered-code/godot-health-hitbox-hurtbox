@@ -1,9 +1,9 @@
 class_name Health extends Node
 ## Health is used to track an entity's health, death, and revival.
 
-
 ## Affect an action will have on [Health].
 enum Affect { NONE, DAMAGE, HEAL }
+
 
 ## Emitted after damage is applied.
 signal damaged(entity: Node, type: HealthActionType.Enum, amount: int, incrementer: int, multiplier: float, applied: int)
@@ -18,7 +18,6 @@ signal revived(entity: Node)
 ## Emitted after damage or healing is applied.
 signal action_applied(action: HealthModifiedAction, applied: int)
 
-
 ## Emitted when damaged and entity had full health.
 signal first_hit(entity: Node)
 ## Emitted when trying to damage an entity that is not damageable.
@@ -27,7 +26,6 @@ signal not_damageable(entity: Node)
 signal already_dead(entity: Node)
 ## Emitted when trying to apply enough damage to an enemy to kill them and they cannot be.
 signal not_killable(entity: Node)
-
 
 ## Emitted when trying to heal and entity is not healable.
 signal not_healable(entity: Node)
