@@ -1,19 +1,62 @@
-[gd_scene load_steps=9 format=3 uid="uid://cecy1cql72hw4"]
+[gd_scene load_steps=16 format=3 uid="uid://cecy1cql72hw4"]
 
 [ext_resource type="Script" uid="uid://b2o7dxe0iarfj" path="res://tutorials/2d/enemy/enemy.gd" id="1_86q4j"]
 [ext_resource type="Texture2D" uid="uid://b558ojjtwoyn2" path="res://tutorials/2d/enemy/enemy.png" id="2_mxoys"]
 [ext_resource type="Script" uid="uid://dr8bvnfebp76" path="res://addons/health_hitbox_hurtbox/health/health.gd" id="2_sohxq"]
 [ext_resource type="Script" uid="uid://dtfoilkdcfvgv" path="res://addons/health_hitbox_hurtbox/2d/hurt_box_2d/basic_hurt_box_2d.gd" id="4_tqx0n"]
+[ext_resource type="Script" uid="uid://cobp4qehnuq77" path="res://addons/health_hitbox_hurtbox/resources/health_modifier.gd" id="5_sohxq"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_86q4j"]
 radius = 7.0
 height = 20.0
 
+[sub_resource type="Resource" id="Resource_tqx0n"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 4.0
+convert_affect = 0
+convert_type = 0
+
+[sub_resource type="Resource" id="Resource_ctiot"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 1.0
+convert_affect = 0
+convert_type = 0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_86q4j"]
 radius = 6.0
 
+[sub_resource type="Resource" id="Resource_cy1cf"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 1.0
+convert_affect = 0
+convert_type = 0
+
+[sub_resource type="Resource" id="Resource_xp2jm"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 1.0
+convert_affect = 0
+convert_type = 0
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sohxq"]
 size = Vector2(10, 7)
+
+[sub_resource type="Resource" id="Resource_j5tah"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 1.0
+convert_affect = 0
+convert_type = 0
+
+[sub_resource type="Resource" id="Resource_pgbcn"]
+script = ExtResource("5_sohxq")
+incrementer = 0
+multiplier = 1.0
+convert_affect = 0
+convert_type = 0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sohxq"]
 radius = 6.0
@@ -60,6 +103,10 @@ collision_mask = 0
 script = ExtResource("4_tqx0n")
 damage_multiplier = 4.0
 health = NodePath("../Health")
+modifiers = Dictionary[int, ExtResource("5_sohxq")]({
+1: SubResource("Resource_ctiot"),
+2: SubResource("Resource_tqx0n")
+})
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HeadHurtBox2D"]
@@ -72,6 +119,10 @@ collision_layer = 128
 collision_mask = 0
 script = ExtResource("4_tqx0n")
 health = NodePath("../Health")
+modifiers = Dictionary[int, ExtResource("5_sohxq")]({
+1: SubResource("Resource_xp2jm"),
+2: SubResource("Resource_cy1cf")
+})
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BodyHurtBox2D"]
@@ -84,6 +135,10 @@ collision_layer = 512
 collision_mask = 0
 script = ExtResource("4_tqx0n")
 health = NodePath("../Health")
+modifiers = Dictionary[int, ExtResource("5_sohxq")]({
+1: SubResource("Resource_pgbcn"),
+2: SubResource("Resource_j5tah")
+})
 metadata/_custom_type_script = "uid://dtfoilkdcfvgv"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AOEHurtBox2D"]
