@@ -1,15 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://gtb70vt133hn"]
+[gd_scene load_steps=5 format=3 uid="uid://gtb70vt133hn"]
 
 [ext_resource type="Script" uid="uid://cyo7agxu73seo" path="res://example/projectile/projectile.gd" id="1_3ruoe"]
 [ext_resource type="Texture2D" uid="uid://b2aimahotvsyr" path="res://assets/projectile.png" id="2_v4j7r"]
 [ext_resource type="Script" uid="uid://chrsg1fc53qs3" path="res://addons/health_hitbox_hurtbox/2d/hit_box_2d/basic_hit_box_2d.gd" id="3_6hhp3"]
-[ext_resource type="Script" uid="uid://hrwhd52e5mkq" path="res://addons/health_hitbox_hurtbox/resources/health_action.gd" id="4_0m56n"]
-
-[sub_resource type="Resource" id="Resource_gyeyi"]
-script = ExtResource("4_0m56n")
-affect = 1
-type = 2
-amount = 10
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_60ck8"]
 size = Vector2(3.99997, 9)
@@ -26,7 +19,6 @@ collision_layer = 256
 collision_mask = 304
 script = ExtResource("3_6hhp3")
 amount = 10
-actions = Array[ExtResource("4_0m56n")]([SubResource("Resource_gyeyi")])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox2D"]
 position = Vector2(-0.499993, 1.33315e-06)
