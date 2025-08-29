@@ -1,61 +1,12 @@
-[gd_scene load_steps=14 format=3 uid="uid://dnbgq63rhbp38"]
+[gd_scene load_steps=5 format=3 uid="uid://dnbgq63rhbp38"]
 
 [ext_resource type="PackedScene" uid="uid://l7q3g1b102a7" path="res://example/player/player.tscn" id="1_plffl"]
 [ext_resource type="Script" uid="uid://q6lcpywmut7p" path="res://example/main.gd" id="1_qd6oa"]
 [ext_resource type="Script" uid="uid://b4prlhibnn6cj" path="res://addons/health_hitbox_hurtbox/2d/hit_scan_2d/basic_hit_scan_2d.gd" id="2_c8t1k"]
-[ext_resource type="Script" uid="uid://hrwhd52e5mkq" path="res://addons/health_hitbox_hurtbox/resources/health_action.gd" id="3_85x0u"]
 
 [sub_resource type="Theme" id="Theme_pjoij"]
 Label/colors/font_color = Color(1, 0.654902, 0.109804, 1)
 Label/font_sizes/font_size = 20
-
-[sub_resource type="Resource" id="Resource_bfisx"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_85x0u"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_c6clk"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_sr8vx"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_dhpm0"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_wqluj"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_8lg5i"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
-
-[sub_resource type="Resource" id="Resource_llkpy"]
-script = ExtResource("3_85x0u")
-affect = 1
-type = 2
-amount = 10
 
 [node name="Main" type="Node"]
 script = ExtResource("1_qd6oa")
@@ -236,7 +187,6 @@ collide_with_areas = true
 collide_with_bodies = false
 script = ExtResource("2_c8t1k")
 amount = 10
-actions = Array[ExtResource("3_85x0u")]([SubResource("Resource_bfisx"), SubResource("Resource_85x0u"), SubResource("Resource_c6clk"), SubResource("Resource_sr8vx")])
 
 [node name="BodyHitScan2D" type="RayCast2D" parent="."]
 position = Vector2(-10, 165)
@@ -246,7 +196,6 @@ collide_with_areas = true
 collide_with_bodies = false
 script = ExtResource("2_c8t1k")
 amount = 10
-actions = Array[ExtResource("3_85x0u")]([SubResource("Resource_dhpm0"), SubResource("Resource_wqluj"), SubResource("Resource_8lg5i"), SubResource("Resource_llkpy")])
 
 [node name="HeadMarker2D" type="Marker2D" parent="."]
 position = Vector2(573, 140)
