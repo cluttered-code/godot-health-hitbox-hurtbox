@@ -1,23 +1,23 @@
-@tool
+@icon("res://addons/health_hitbox_hurtbox/2d/hit_scan_2d/hit_scan_2d.svg")
 class_name HitScan2D extends RayCast2D
-## [HitScan2D] interacts with [HurtBox2D] to affect [Health] components.
+## [HitScan2D] interacts with [AbstractHurtBox2D] to affect [Health] components.
+
 
 ## emitted when collision with [HitBox2D] detected.
 signal hit_box_entered(hit_box: HitBox2D)
 ## emitted when collision with [HurtBox2D] detected.
 signal hurt_box_entered(hurt_box: HurtBox2D)
-## emitted after the action is applied to a [HurtBox2D].
-signal action_applied(hurt_box: HurtBox2D)
+## emitted after the actions were applied to a [HurtBox2D].
+signal actions_applied(hurt_box: HurtBox2D)
 ## emitted when collision with [Area2D] that isn't [HitBox2D] or [HurtBox2D].
-## Used to detect things like environment.
+## Can be using to detect things like environment.
 signal unknown_area_entered(area: Area2D)
 
 
-## [Modifer] applied to [HealthActionType.Enum].
-@export var actions: Array[HealthAction] = []
+var _actions: Array[HealthAction] = []
 
 # Here for testing, can't mock native node functions
-var _collider: Node
+var _test_collider: Node
 
 
 func _enter_tree() -> void:
@@ -43,7 +43,8 @@ func _set(property: StringName, value: Variant) -> bool:
 
 ## Detect collisions with [HurtBox2D] and apply appropriate action.
 func fire() -> void:
-	var collider = _collider if _collider else get_collider()
+	# get_collider() can't be mocked, _collider is set during tests
+	var collider: Node = _test_collider if _test_collider else get_collider()
 	if not collider:
 		return
 	
@@ -61,5 +62,11 @@ func fire() -> void:
 	
 	var hurt_box: HurtBox2D = collider
 	hurt_box_entered.emit(hurt_box)
-	hurt_box.apply_all_actions(actions)
-	action_applied.emit(hurt_box)
+	
+	# FIX in godot 4.5: var dup_actions := _actions.duplicate_deep()
+	var dup_actions: Array[HealthAction]
+	dup_actions.assign(Utils.array_duplicate_deep(_actions))
+	# ################################
+	
+	hurt_box.apply_all_actions(dup_actions)
+	actions_applied.emit(hurt_box)
