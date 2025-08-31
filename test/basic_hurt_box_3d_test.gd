@@ -16,8 +16,8 @@ func before_test() -> void:
 func test_defaults() -> void:
 	var modifier := HealthModifier.new()
 
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
 
 
 func test_damage_multiplier() -> void:
@@ -26,7 +26,7 @@ func test_damage_multiplier() -> void:
 
 	hurt_box.damage_multiplier = 6.9
 
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
 
 
 func test_heal_on_damage() -> void:
@@ -35,7 +35,7 @@ func test_heal_on_damage() -> void:
 
 	hurt_box.heal_on_damage = true
 
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.KINETIC]).is_equal(HealthModifierMatcher.new(modifier))
 
 
 func test_heal_multiplier() -> void:
@@ -44,7 +44,7 @@ func test_heal_multiplier() -> void:
 
 	hurt_box.heal_multiplier = 4.2
 
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
 
 
 func test_damage_on_heal() -> void:
@@ -53,4 +53,4 @@ func test_damage_on_heal() -> void:
 
 	hurt_box.damage_on_heal = true
 
-	assert_object(hurt_box.modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
+	assert_object(hurt_box._modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
