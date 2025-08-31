@@ -1,6 +1,6 @@
 @tool
 class_name BasicHitBox2D extends HitBox2D
-## [BasicHitBox2D] is associated with an entity that can collide with an [HurtBox2D].
+## [BasicHitBox2D] is associated with an entity that can collide with a [HurtBox2D].
 
 
 ## The [Health.Affect] to be performed.
