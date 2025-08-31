@@ -8,7 +8,7 @@ func _ready() -> void:
 	health.died.connect(_on_died)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if transform.x.x < 0:
 		progress_bar.fill_mode = progress_bar.FILL_END_TO_BEGIN
 	else:
@@ -19,7 +19,7 @@ func _on_died(_entity: Node) -> void:
 	health.fill()
 
 
-func _on_health_action_applied(action: HealthModifiedAction, applied: int) -> void:
+func _on_health_action_applied(_action: HealthModifiedAction, _applied: int) -> void:
 	_update_progress_bar()
 
 

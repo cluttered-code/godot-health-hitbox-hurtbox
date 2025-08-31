@@ -44,7 +44,7 @@ jobs:
           lfs: true
 
       - name: Run GDUnit4 Tests
-        uses: MikeSchulze/gdunit4-action@v1.1.5
+        uses: MikeSchulze/gdunit4-action@v1.1.6
         with:
           version: "installed"
           godot-version: ${{ matrix.godot-version }}
