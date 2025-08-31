@@ -1,9 +1,9 @@
-class_name HurtBox2DTest extends GdUnitTestSuite
+class_name AdvancedHurtBox2DTest extends GdUnitTestSuite
 @warning_ignore('unused_parameter')
 @warning_ignore('return_value_discarded')
 
 var mock_health: Health
-var hurt_box: HurtBox2D
+var hurt_box: AdvancedHurtBox2D
 var kinetic_modifier: HealthModifier
 var medicine_modifier: HealthModifier
 
@@ -13,7 +13,7 @@ func before_test() -> void:
 	kinetic_modifier = HealthModifier.new(1, 2.0, Health.Affect.HEAL)
 	medicine_modifier = HealthModifier.new(0, 1.0, Health.Affect.HEAL, HealthActionType.Enum.KINETIC)
 	
-	hurt_box = auto_free(HurtBox2D.new())
+	hurt_box = auto_free(AdvancedHurtBox2D.new())
 	hurt_box.health = mock_health
 	hurt_box.modifiers[HealthActionType.Enum.KINETIC] = kinetic_modifier
 	hurt_box.modifiers[HealthActionType.Enum.MEDICINE] = medicine_modifier
