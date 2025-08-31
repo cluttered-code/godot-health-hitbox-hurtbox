@@ -22,7 +22,7 @@ signal unknown_area_entered(area: Area3D)
 ## [color=orange]queue_free()[/color] to avoid further collisions.
 @export var ignore_collisions: bool = false
 
-## contains all actions to be applied by this [HitBox2D].
+## contains all actions to be applied by this [HitBox3D].
 var _actions: Array[HealthAction] = []
 
 
