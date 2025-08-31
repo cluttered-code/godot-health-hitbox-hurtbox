@@ -14,16 +14,16 @@ func before_test() -> void:
 
 func test_defaults() -> void:
 	var action := HealthAction.new()
-	assert_int(hit_box.actions.size()).is_equal(1)
-	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
+	assert_int(hit_box._actions.size()).is_equal(1)
+	assert_object(hit_box._actions[0]).is_equal(HealthActionMatcher.new(action))
 
 
 func test_affect() -> void:
 	hit_box.affect = Health.Affect.HEAL
 
 	var action := HealthAction.new(Health.Affect.HEAL, HealthActionType.Enum.MEDICINE)
-	assert_int(hit_box.actions.size()).is_equal(1)
-	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
+	assert_int(hit_box._actions.size()).is_equal(1)
+	assert_object(hit_box._actions[0]).is_equal(HealthActionMatcher.new(action))
 
 
 func test_amount() -> void:
@@ -31,5 +31,5 @@ func test_amount() -> void:
 
 	var action := HealthAction.new()
 	action.amount = 25
-	assert_int(hit_box.actions.size()).is_equal(1)
-	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
+	assert_int(hit_box._actions.size()).is_equal(1)
+	assert_object(hit_box._actions[0]).is_equal(HealthActionMatcher.new(action))
