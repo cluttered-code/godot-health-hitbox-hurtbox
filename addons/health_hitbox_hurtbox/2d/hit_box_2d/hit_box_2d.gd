@@ -1,4 +1,3 @@
-@tool
 class_name HitBox2D extends Area2D
 ## [HitBox2D] is associated with an object that can collide with a [HurtBox2D].
 

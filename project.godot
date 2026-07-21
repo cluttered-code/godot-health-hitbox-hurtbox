@@ -8,12 +8,16 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Health, Hitboxes, HurtBoxes, and HitScans"
 config/version="1.0.0"
 run/main_scene="uid://dd1whdx3ps7c7"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://images/addon_icon.png"
 
 [display]
@@ -27,7 +31,7 @@ window/stretch/mode="viewport"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/health_hitbox_hurtbox/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg", "res://addons/health_hitbox_hurtbox/plugin.cfg")
 
 [global_group]
 

@@ -1,4 +1,3 @@
-@tool
 class_name HitBox3D extends Area3D
 ## [HitBox3D] is associated with an object that can collide with a [HurtBox3D].
 

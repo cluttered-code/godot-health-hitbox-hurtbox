@@ -1,4 +1,3 @@
-@tool
 class_name BasicHitScan2D extends HitScan2D
 ## BasicHitScan2D interacts with [HurtBox2D] to affect [Health] components.
 

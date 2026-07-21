@@ -1,4 +1,3 @@
-@tool
 class_name BasicHurtBox3D extends HurtBox3D
 ## [BasicHurtBox3D] enables collision detection by [HitBox3D] or [HitScan3D] and applies affects to [Health].
 
