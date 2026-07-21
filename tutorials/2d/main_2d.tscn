@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dd1whdx3ps7c7"]
+[gd_scene format=3 uid="uid://dd1whdx3ps7c7"]
 
 [ext_resource type="Script" uid="uid://b5uy72dwqkor1" path="res://tutorials/2d/main_2d.gd" id="1_kbfui"]
 [ext_resource type="PackedScene" uid="uid://r81mddvlsa2" path="res://tutorials/2d/player/player.tscn" id="2_8p1ft"]
@@ -16,42 +16,42 @@ size = Vector2(340, 20)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pj4r1"]
 size = Vector2(20, 200)
 
-[node name="Main2D" type="Node"]
+[node name="Main2D" type="Node" unique_id=2078084395]
 script = ExtResource("1_kbfui")
 
-[node name="Player" parent="." instance=ExtResource("2_8p1ft")]
+[node name="Player" parent="." unique_id=1716219276 instance=ExtResource("2_8p1ft")]
 position = Vector2(146, 97)
 motion_mode = 1
 
-[node name="BoundaryStaticBodys2D" type="StaticBody2D" parent="."]
+[node name="BoundaryStaticBodys2D" type="StaticBody2D" parent="." unique_id=405141140]
 collision_mask = 0
 
-[node name="TopCollisionShape2D2" type="CollisionShape2D" parent="BoundaryStaticBodys2D"]
+[node name="TopCollisionShape2D2" type="CollisionShape2D" parent="BoundaryStaticBodys2D" unique_id=1252736931]
 position = Vector2(170, -10)
 shape = SubResource("RectangleShape2D_8p1ft")
 
-[node name="RightCollisionShape2D3" type="CollisionShape2D" parent="BoundaryStaticBodys2D"]
+[node name="RightCollisionShape2D3" type="CollisionShape2D" parent="BoundaryStaticBodys2D" unique_id=283988950]
 position = Vector2(330, 100)
 shape = SubResource("RectangleShape2D_2i2a2")
 
-[node name="BottomCollisionShape2D4" type="CollisionShape2D" parent="BoundaryStaticBodys2D"]
+[node name="BottomCollisionShape2D4" type="CollisionShape2D" parent="BoundaryStaticBodys2D" unique_id=1107954804]
 position = Vector2(150, 190)
 shape = SubResource("RectangleShape2D_gppnl")
 
-[node name="LeftCollisionShape2D" type="CollisionShape2D" parent="BoundaryStaticBodys2D"]
+[node name="LeftCollisionShape2D" type="CollisionShape2D" parent="BoundaryStaticBodys2D" unique_id=954175650]
 position = Vector2(-10, 80)
 shape = SubResource("RectangleShape2D_pj4r1")
 
-[node name="Enemy" parent="." instance=ExtResource("3_gppnl")]
+[node name="Enemy" parent="." unique_id=1529150338 instance=ExtResource("3_gppnl")]
 position = Vector2(32, 35)
 
-[node name="Enemy2" parent="." instance=ExtResource("3_gppnl")]
+[node name="Enemy2" parent="." unique_id=456960713 instance=ExtResource("3_gppnl")]
 position = Vector2(33, 162)
 
-[node name="Enemy3" parent="." instance=ExtResource("3_gppnl")]
+[node name="Enemy3" parent="." unique_id=944796866 instance=ExtResource("3_gppnl")]
 position = Vector2(291, 35)
 scale = Vector2(-1, 1)
 
-[node name="Enemy4" parent="." instance=ExtResource("3_gppnl")]
+[node name="Enemy4" parent="." unique_id=1666321877 instance=ExtResource("3_gppnl")]
 position = Vector2(292, 164)
 scale = Vector2(-1, 1)

@@ -6,16 +6,10 @@ signal test_counters_changed(index: int, total: int, state: GdUnitInspectorTreeC
 signal tree_item_selected(item: TreeItem)
 
 
-const CONTEXT_MENU_RUN_ID = 0
-const CONTEXT_MENU_DEBUG_ID = 1
-const CONTEXT_MENU_COLLAPSE_ALL = 3
-const CONTEXT_MENU_EXPAND_ALL = 4
-
-
 @onready var _tree: Tree = $Panel/Tree
 @onready var _report_list: Node = $report/ScrollContainer/list
 @onready var _report_template: RichTextLabel = $report/report_template
-@onready var _context_menu: PopupMenu = $contextMenu
+@onready var _context_menu: GdUnitInspectorContextMenu = $contextMenu
 @onready var _discover_hint: Control = %discover_hint
 @onready var _spinner: Button = %spinner
 
@@ -64,22 +58,8 @@ const STATE = GdUnitInspectorTreeConstants.STATE
 
 var _tree_root: TreeItem
 var _current_selected_item: TreeItem = null
-var _item_hash := Dictionary()
 var _current_tree_view_mode := GdUnitSettings.get_inspector_tree_view_mode()
 var _run_test_recovery := true
-
-
-func _build_cache_key(resource_path: String, test_name: String) -> Array:
-	return [resource_path, test_name]
-
-
-func add_tree_item_to_cache(resource_path: String, test_name: String, item: TreeItem) -> void:
-	var key := _build_cache_key(resource_path, test_name)
-	_item_hash[key] = item
-
-
-func clear_tree_item_cache() -> void:
-	_item_hash.clear()
 
 
 ## Used for debugging purposes only
@@ -114,15 +94,16 @@ func _find_tree_item_by_id(parent: TreeItem, id: GdUnitGUID) -> TreeItem:
 	return null
 
 
-func _find_tree_item_by_path(resource_path: String, item_name: String) -> TreeItem:
-	var key := _build_cache_key(resource_path, item_name)
-	return _item_hash.get(key, null)
-
-
-func _find_by_resource_path(current: TreeItem, resource_path: String) -> TreeItem:
-	for item in current.get_children():
-		if get_item_source_file(item) == resource_path:
-			return item
+func _find_tree_item_by_test_suite(parent: TreeItem, suite_path: String, suite_name: String) -> TreeItem:
+	for child in parent.get_children():
+		if child.get_meta(META_GDUNIT_TYPE) == GdUnitType.TEST_SUITE:
+			var test_case: GdUnitTestCase = child.get_meta(META_TEST_CASE)
+			if test_case.suite_resource_path == suite_path and test_case.suite_name == suite_name:
+				return child
+		if child.get_child_count() > 0:
+			var item := _find_tree_item_by_test_suite(child, suite_path, suite_name)
+			if item != null:
+				return item
 	return null
 
 
@@ -206,13 +187,9 @@ func disable_test_recovery() -> void:
 
 @warning_ignore("return_value_discarded")
 func _ready() -> void:
-	_context_menu.set_item_icon(CONTEXT_MENU_RUN_ID, GdUnitUiTools.get_icon("Play"))
-	_context_menu.set_item_icon(CONTEXT_MENU_DEBUG_ID, GdUnitUiTools.get_icon("PlayStart"))
-	_context_menu.set_item_icon(CONTEXT_MENU_EXPAND_ALL, GdUnitUiTools.get_icon("ExpandTree"))
-	_context_menu.set_item_icon(CONTEXT_MENU_COLLAPSE_ALL, GdUnitUiTools.get_icon("CollapseTree"))
-	# do colorize the icons
-	#for index in _context_menu.item_count:
-	#	_context_menu.set_item_icon_modulate(index, Color.MEDIUM_PURPLE)
+	if Engine.is_editor_hint():
+		var base_control := EditorInterface.get_base_control()
+		base_control.set_meta("GdUnit4Inspector", self)
 
 	_spinner.icon = GdUnitUiTools.get_spinner()
 	init_tree()
@@ -221,8 +198,6 @@ func _ready() -> void:
 	GdUnitSignals.instance().gdunit_test_discover_added.connect(on_test_case_discover_added)
 	GdUnitSignals.instance().gdunit_test_discover_deleted.connect(on_test_case_discover_deleted)
 	GdUnitSignals.instance().gdunit_test_discover_modified.connect(on_test_case_discover_modified)
-	var command_handler := GdUnitCommandHandler.instance()
-	command_handler.gdunit_runner_stop.connect(_on_gdunit_runner_stop)
 	if _run_test_recovery:
 		GdUnitTestDiscoverer.restore_last_session()
 
@@ -261,7 +236,6 @@ func init_tree() -> void:
 
 func cleanup_tree() -> void:
 	clear_reports()
-	clear_tree_item_cache()
 	if not _tree_root:
 		return
 	_free_recursive()
@@ -722,7 +696,7 @@ func add_report(item: TreeItem, report: GdUnitReport) -> void:
 
 func abort_running(items:=_tree_root.get_children()) -> void:
 	for item in items:
-		if is_state_running(item):
+		if item.get_icon(0) == ICON_SPINNER:
 			set_state_aborted(item)
 			abort_running(item.get_children())
 
@@ -772,14 +746,16 @@ func show_failed_report(selected_item: TreeItem) -> void:
 	for report in get_item_reports(selected_item):
 		var reportNode: RichTextLabel = _report_template.duplicate()
 		_report_list.add_child(reportNode)
+		reportNode.push_color(Color.DARK_TURQUOISE)
 		reportNode.append_text(report.to_string())
+		reportNode.pop()
 		reportNode.visible = true
 
 
 func update_test_suite(event: GdUnitEvent) -> void:
-	var item := _find_tree_item_by_path(extract_resource_path(event), event.suite_name())
+	var item := _find_tree_item_by_test_suite(_tree_root, event.resource_path(), event.suite_name())
 	if not item:
-		push_error("[InspectorTreeMainPanel#update_test_suite] Internal Error: Can't find tree item for\n %s" % event)
+		push_error("[InspectorTreeMainPanel#update_test_suite] Internal Error: Can't find test suite item '{_suite_name}' for {_resource_path} ".format(event))
 		return
 	if event.type() == GdUnitEvent.TESTSUITE_AFTER:
 		update_item_elapsed_time_counter(item, event.elapsed_time())
@@ -820,8 +796,6 @@ func create_item(parent: TreeItem, test: GdUnitTestCase, item_name: String, type
 		GdUnitType.TEST_SUITE:
 			# We need to create a copy of the test record meta with a new uniqe guid
 			item.set_meta(META_TEST_CASE, GdUnitTestCase.from(test.suite_resource_path, test.source_file, test.line_number, test.suite_name))
-			# We need to add the suite item to the item cache by path because the guid is not provided
-			add_tree_item_to_cache(test.source_file, item_name, item)
 
 	item.set_meta(META_GDUNIT_NAME, item_name)
 	set_state_initial(item, type)
@@ -986,7 +960,7 @@ func get_icon_by_file_type(path: String, state: STATE, orphans: bool) -> Texture
 
 func on_test_case_discover_added(test_case: GdUnitTestCase) -> void:
 	var test_root_folder := GdUnitSettings.test_root_folder().replace("res://", "")
-	var fully_qualified_name := test_case.fully_qualified_name.trim_prefix(test_root_folder).trim_suffix(test_case.display_name)
+	var fully_qualified_name := test_case.fully_qualified_name.trim_suffix(test_case.display_name)
 	var parts := fully_qualified_name.split(".", false)
 	parts.append(test_case.display_name)
 	# Skip tree structure until test root folder
@@ -1004,13 +978,14 @@ func on_test_case_discover_added(test_case: GdUnitTestCase) -> void:
 func create_items_tree_mode_tree(test_case: GdUnitTestCase, parts: PackedStringArray) -> void:
 	var parent := _tree_root
 	var is_suite_assigned := false
+	var suite_name := test_case.suite_name.split(".")[-1]
 	for item_name in parts:
 		var next := _find_tree_item(parent, item_name)
 		if next != null:
 			parent = next
 			continue
 
-		if not is_suite_assigned and test_case.suite_name.ends_with(item_name):
+		if not is_suite_assigned and suite_name == item_name:
 			next = create_item(parent, test_case, item_name, GdUnitType.TEST_SUITE)
 			is_suite_assigned = true
 		elif item_name == test_case.display_name:
@@ -1134,6 +1109,22 @@ func collect_test_cases(item: TreeItem, tests: Array[GdUnitTestCase] = []) -> Ar
 	return tests
 
 
+func test_session_start() -> void:
+	_context_menu.disable_items()
+	reset_tree_state(_tree_root)
+	clear_reports()
+
+
+func test_session_stop() -> void:
+	_context_menu.enable_items()
+	abort_running()
+	sort_tree_items(_tree_root)
+	# wait until the tree redraw
+	await get_tree().process_frame
+	var failure_item := _find_first_item_by_state(_tree_root, STATE.FAILED)
+	select_item( failure_item if failure_item else _current_selected_item)
+
+
 ################################################################################
 # Tree signal receiver
 ################################################################################
@@ -1143,24 +1134,9 @@ func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: i
 		_context_menu.popup()
 
 
-func _on_run_pressed(run_debug: bool) -> void:
-	_context_menu.hide()
-	var item: = _tree.get_selected()
-	if item == null:
-		print_rich("[color=GOLDENROD]Abort Testrun, no test suite selected![/color]")
-		return
-
-	var test_to_execute := collect_test_cases(item)
-	GdUnitCommandHandler.instance().cmd_run_tests(test_to_execute, run_debug)
-
-
 func _on_Tree_item_selected() -> void:
-	# only show report checked manual item selection
-	# we need to check the run mode here otherwise it will be called every selection
-	if not _context_menu.is_item_disabled(CONTEXT_MENU_RUN_ID):
-		var selected_item: TreeItem = _tree.get_selected()
-		show_failed_report(selected_item)
 	_current_selected_item = _tree.get_selected()
+	show_failed_report(_current_selected_item)
 	tree_item_selected.emit(_current_selected_item)
 
 
@@ -1190,23 +1166,6 @@ func _on_Tree_item_activated() -> void:
 ################################################################################
 # external signal receiver
 ################################################################################
-func _on_gdunit_runner_start() -> void:
-	_context_menu.set_item_disabled(CONTEXT_MENU_RUN_ID, true)
-	_context_menu.set_item_disabled(CONTEXT_MENU_DEBUG_ID, true)
-	reset_tree_state(_tree_root)
-	clear_reports()
-
-
-func _on_gdunit_runner_stop(_id: int) -> void:
-	_context_menu.set_item_disabled(CONTEXT_MENU_RUN_ID, false)
-	_context_menu.set_item_disabled(CONTEXT_MENU_DEBUG_ID, false)
-	abort_running()
-	sort_tree_items(_tree_root)
-	# wait until the tree redraw
-	await get_tree().process_frame
-	var failure_item := _find_first_item_by_state(_tree_root, STATE.FAILED)
-	select_item( failure_item if failure_item else _current_selected_item)
-
 
 func _on_gdunit_event(event: GdUnitEvent) -> void:
 	match event.type():
@@ -1222,9 +1181,6 @@ func _on_gdunit_event(event: GdUnitEvent) -> void:
 			_tree_root.visible = true
 			#_dump_tree_as_json("tree_example_discovered")
 
-		GdUnitEvent.INIT:
-			_on_gdunit_runner_start()
-
 		GdUnitEvent.TESTCASE_BEFORE:
 			update_test_case(event)
 
@@ -1237,17 +1193,11 @@ func _on_gdunit_event(event: GdUnitEvent) -> void:
 		GdUnitEvent.TESTSUITE_AFTER:
 			update_test_suite(event)
 
+		GdUnitEvent.SESSION_START:
+			test_session_start()
 
-func _on_context_m_index_pressed(index: int) -> void:
-	match index:
-		CONTEXT_MENU_DEBUG_ID:
-			_on_run_pressed(true)
-		CONTEXT_MENU_RUN_ID:
-			_on_run_pressed(false)
-		CONTEXT_MENU_EXPAND_ALL:
-			do_collapse_all(false)
-		CONTEXT_MENU_COLLAPSE_ALL:
-			do_collapse_all(true)
+		GdUnitEvent.SESSION_CLOSE:
+			await test_session_stop()
 
 
 func _on_settings_changed(property :GdUnitProperty) -> void:

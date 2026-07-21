@@ -53,13 +53,8 @@ const DEFAULT_MAX = 100
 	set(new_max):
 		var old_max = max
 		max = maxi(new_max, 1)
-		# after max is set or current will clamp wrong
-		if Engine.is_editor_hint() and current == old_max:
-			# keep full health in editor if it was before
-			current = max
-		else:
-			# reduce current in game so it is not greater than max
-			current = mini(current, max)
+		# reduce current in game so it is not greater than max
+		current = mini(current, max)
 
 @export_group("Conditions")
 ## Enable if entity is capable of taking damage.

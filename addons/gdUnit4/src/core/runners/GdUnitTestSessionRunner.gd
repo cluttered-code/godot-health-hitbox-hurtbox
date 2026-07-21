@@ -18,6 +18,7 @@ const RETURN_SUCCESS = 0
 const RETURN_ERROR = 100
 const RETURN_ERROR_HEADLESS_NOT_SUPPORTED = 103
 const RETURN_ERROR_GODOT_VERSION_NOT_SUPPORTED = 104
+const RETURN_ERROR_SCRIPT_ERRORS_DETECTED = 105
 const RETURN_WARNING = 101
 
 ## Specifies the Node name under which the runner is registered
@@ -80,12 +81,13 @@ enum {
 }
 
 func _init() -> void:
-	# minimize scene window checked debug mode
 	if OS.get_cmdline_args().size() == 1:
 		DisplayServer.window_set_title("GdUnit4 Runner (Debug Mode)")
 	else:
 		DisplayServer.window_set_title("GdUnit4 Runner (Release Mode)")
-	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
+	if not Engine.is_embedded_in_editor():
+		# minimize scene window checked debug mode
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 	# store current runner instance to engine meta data to can be access in as a singleton
 	Engine.set_meta(GDUNIT_RUNNER, self)
 
@@ -112,8 +114,8 @@ func _process(_delta: float) -> void:
 	match _state:
 		INIT:
 			await init_runner()
-			_hooks = GdUnitTestSessionHookService.instance()
 		RUN:
+			_hooks = GdUnitTestSessionHookService.instance()
 			_test_session = GdUnitTestSession.new(_test_cases, report_path)
 			GdUnitSignals.instance().gdunit_event.emit(GdUnitSessionStart.new())
 			# process next test suite

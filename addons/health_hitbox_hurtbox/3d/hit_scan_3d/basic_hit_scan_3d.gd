@@ -1,4 +1,3 @@
-@tool
 class_name BasicHitScan3D extends HitScan3D
 ## BasicHitScan3D interacts with [HurtBox3D] to affect [Health] components.
 

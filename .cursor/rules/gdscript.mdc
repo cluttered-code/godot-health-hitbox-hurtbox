@@ -1,0 +1,92 @@
+---
+description: Godot 4.7 / GDScript 2.0 style, APIs, GdUnit4 tests, and README documentation requirements
+globs: "**/*.gd"
+alwaysApply: false
+---
+
+# GDScript 2.0 (Godot 4.7)
+
+Never write Godot 3 syntax. Prefer composition and typed signals over deep inheritance.
+
+## Typing & syntax
+
+- Explicit types everywhere: `var score: int = 0`, `var player: CharacterBody2D = null`
+- Use `:=` only when the RHS type is obvious: `var velocity := Vector2.ZERO`
+- Typed arrays: `var enemies: Array[CharacterBody2D] = []`
+- Every function declares a return type: `func take_damage(amount: int) -> void:`, `func get_speed() -> float:`
+- Node refs: `@onready var sprite: Sprite2D = $Sprite2D` or `%MyUniqueNode` — never `get_node()`
+- Modern annotations only: `@export`, `@onready`, `@icon`, `@tool`
+- Lifecycle: call `super()` when overriding; prefer `@onready` over `_ready()` lookups
+- `_init` params start with `_`: `_name`, `_amount`
+
+```gdscript
+# BAD (Godot 3)
+connect("pressed", self, "_on_pressed")
+pack.instance()
+move_and_slide(velocity)
+
+# GOOD (Godot 4)
+button.pressed.connect(_on_pressed)
+pack.instantiate()
+move_and_slide()
+```
+
+## Godot 4 APIs
+
+- Signals: callable `.connect()` only; typed `signal item_collected(item_name: String)`
+- Movement: set `velocity`, then `move_and_slide()` with no args
+- Frame math: multiply by `delta` in `_process` / `_physics_process`
+- StringNames for names/actions/signals: `&"score_changed"`
+- Enums: use typed constants (`State.IDLE`), not magic ints
+
+## Naming
+
+| Kind | Style | Example |
+|------|--------|---------|
+| Files | snake_case | `player_character.gd` |
+| Classes / nodes | PascalCase | `PlayerCharacter` |
+| Vars / funcs | snake_case | `apply_damage()` |
+| Constants / enum values | ALL_CAPS | `MAX_SPEED`, `IDLE` |
+| Signals | snake_case past tense | `score_changed` |
+
+## Output
+
+- Concise, typed, no obvious comments (docstrings only for non-obvious logic)
+- Methods under ~30 lines when practical
+- Scenes: describe setup steps; do not dump `.tscn` source
+- Cleanup: disconnect signals / free resources in `_exit_tree()` when needed
+- Prefers: physics layers, packed arrays, `preload()` for required resources
+
+## Documentation
+
+Always keep documentation current when changing public behavior, APIs, or architecture.
+
+- Maintain a high-level project overview in `README.md` (root and/or addon package)
+- Cover: what the project does, core concepts, how pieces fit together, and basic usage
+- Prefer a Mermaid diagram for architecture or data flow when relationships matter
+- Update docs in the same change as the code; do not leave README stale after renames or API shifts
+- Keep overview docs concise — deep details belong in wiki, tutorials, or inline class docs
+
+## Testing (GdUnit4)
+
+Always add or update GdUnit4 tests when changing behavior. Do not leave new logic untested.
+
+- Suites live under `test/`, named `*_test.gd`, extend `GdUnitTestSuite`
+- Class name: `SomethingTest` matching the unit under test
+- Setup in `before_test()`; use `auto_free(...)` for nodes/mocks
+- Prefer `mock(Type)` + `assert_*` fluent API; use `monitor_signals` for signal assertions
+- Mirror 2D/3D coverage when both variants exist
+- Prefer shared matchers/helpers under `test/` for repeated resource assertions
+
+```gdscript
+class_name PlayerCharacterTest extends GdUnitTestSuite
+
+var player: PlayerCharacter
+
+func before_test() -> void:
+	player = auto_free(PlayerCharacter.new())
+	add_child(player)
+
+func test_defaults() -> void:
+	assert_float(player.speed).is_equal(0.0)
+```

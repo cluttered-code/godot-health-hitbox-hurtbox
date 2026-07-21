@@ -1,3 +1,4 @@
+@tool
 extends "res://addons/gdUnit4/src/core/runners/GdUnitTestSessionRunner.gd"
 ## Runner implementation used by the editor UI.[br]
 ## [br]
@@ -8,9 +9,9 @@ extends "res://addons/gdUnit4/src/core/runners/GdUnitTestSessionRunner.gd"
 ## - Messages to report progress[br]
 ## - Events to report test results[br]
 
-
 ## The TCP client used to connect to the GdUnit server
 @onready var _client: GdUnitTcpClient = $GdUnitTcpClient
+@onready var _version_label: Control = %Version
 
 
 func _init() -> void:
@@ -21,6 +22,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	super()
+	GdUnit4Version.init_version_label(_version_label)
 
 	var config_result := _runner_config.load_config()
 	if config_result.is_error():
@@ -28,8 +30,9 @@ func _ready() -> void:
 		_state = EXIT
 		return
 	@warning_ignore("return_value_discarded")
-	_client.connect("connection_failed", _on_connection_failed)
+	_client.connection_failed.connect(_on_connection_failed)
 	GdUnitSignals.instance().gdunit_message.connect(_on_send_message)
+	_executor.fail_fast(_runner_config.is_fail_fast())
 	var result := _client.start("127.0.0.1", _runner_config.server_port())
 	if result.is_error():
 		push_error(result.error_message())
@@ -43,6 +46,7 @@ func quit(code: int) -> void:
 	if code != RETURN_SUCCESS:
 		_state = EXIT
 	await GdUnitMemoryObserver.gc_on_guarded_instances()
+	await super.quit(code)
 
 
 ## Called when the TCP connection to the GdUnit server fails.[br]
