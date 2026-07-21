@@ -16,6 +16,7 @@ var _stage_fuzzer_test: IGdUnitExecutionStage = GdUnitTestCaseFuzzedExecutionSta
 func _execute(context :GdUnitExecutionContext) -> void:
 	var test_case := context.test_case
 
+	context.save_project_settings()
 	context.error_monitor_start()
 
 	if test_case.is_fuzzed():
@@ -24,7 +25,8 @@ func _execute(context :GdUnitExecutionContext) -> void:
 		await _stage_single_test.execute(context)
 
 	await context.gc()
-	await context.error_monitor_stop()
+	context.error_monitor_stop()
+	context.restore_project_settings()
 
 	# finally free the test instance
 	if is_instance_valid(context.test_case):
