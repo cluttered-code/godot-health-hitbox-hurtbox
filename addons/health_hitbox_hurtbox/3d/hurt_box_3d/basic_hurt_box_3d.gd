@@ -35,6 +35,7 @@ class_name BasicHurtBox3D extends HurtBox3D
 
 
 func _ready() -> void:
+	modifiers.clear()
 	modifiers[HealthActionType.Enum.KINETIC] = HealthModifier.new(0, damage_multiplier, _affect_heal_on_damage(heal_on_damage))
 	modifiers[HealthActionType.Enum.MEDICINE] = HealthModifier.new(0, heal_multiplier, _affect_damage_on_heal(damage_on_heal))
 

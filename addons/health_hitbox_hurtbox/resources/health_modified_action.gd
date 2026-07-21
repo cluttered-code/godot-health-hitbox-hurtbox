@@ -6,12 +6,12 @@ var modifier: HealthModifier
 ## passthrough returns the modifier.convert_affect or action.affect
 var affect: Health.Affect:
 	get():
-		return modifier.convert_affect if modifier.convert_affect else action.affect
+		return modifier.convert_affect if modifier.convert_affect != Health.Affect.NONE else action.affect
 
-## passthought returns the modifier.conver_type or action.type
+## passthrough returns the modifier.convert_type or action.type
 var type: HealthActionType.Enum:
 	get():
-		return modifier.convert_type if modifier.convert_type else action.type
+		return modifier.convert_type if modifier.convert_type != HealthActionType.Enum.NONE else action.type
 
 ## passthrough returns action.amount
 var amount: int:
@@ -37,7 +37,7 @@ func _init(action: HealthAction, modifier: HealthModifier) -> void:
 
 ## clone because duplicate() doesn't work with _init() parameters
 func clone() -> HealthModifiedAction:
-	return HealthModifiedAction.new(action, modifier)
+	return HealthModifiedAction.new(action.clone(), modifier.clone())
 
 
 func _to_string() -> String:

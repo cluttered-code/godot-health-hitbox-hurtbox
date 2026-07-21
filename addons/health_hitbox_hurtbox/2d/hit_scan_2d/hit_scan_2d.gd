@@ -61,5 +61,16 @@ func fire() -> void:
 	
 	var hurt_box: HurtBox2D = collider
 	hurt_box_entered.emit(hurt_box)
-	hurt_box.apply_all_actions(actions)
+	hurt_box.apply_all_actions(_clone_actions())
 	action_applied.emit(hurt_box)
+
+
+func _clone_actions() -> Array[HealthAction]:
+	var dup: Array[HealthAction]
+	dup.assign(
+		actions.map(
+			func(action: HealthAction) -> HealthAction: return action.clone()
+		)
+	)
+
+	return dup

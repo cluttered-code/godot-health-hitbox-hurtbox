@@ -54,3 +54,11 @@ func test_damage_on_heal() -> void:
 	hurt_box.damage_on_heal = true
 
 	assert_object(hurt_box.modifiers[HealthActionType.Enum.MEDICINE]).is_equal(HealthModifierMatcher.new(modifier))
+
+
+func test_ready_does_not_duplicate_modifiers() -> void:
+	assert_int(hurt_box.modifiers.size()).is_equal(2)
+	hurt_box._ready()
+	assert_int(hurt_box.modifiers.size()).is_equal(2)
+	assert_bool(hurt_box.modifiers.has(HealthActionType.Enum.KINETIC)).is_true()
+	assert_bool(hurt_box.modifiers.has(HealthActionType.Enum.MEDICINE)).is_true()

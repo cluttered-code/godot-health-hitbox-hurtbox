@@ -4,43 +4,43 @@ overview: "Add GdUnit4 tests for the highest-value coverage gaps: Health.fill/mo
 todos:
   - id: "1.1"
     content: Health.fill() tests
-    status: pending
+    status: completed
   - id: "1.2"
     content: Health.modifiers merge tests
-    status: pending
+    status: completed
   - id: "1.3"
     content: Health convert_affect/type tests
-    status: pending
+    status: completed
   - id: "1.4"
     content: Health apply_modified_action(null)
-    status: pending
+    status: completed
   - id: "2.1"
     content: HitScan clone stability tests (+ fix clone if needed)
-    status: pending
+    status: completed
   - id: "2.2"
     content: Basic Hit/Scan init no duplicate actions
-    status: pending
+    status: completed
   - id: "2.3"
     content: Basic Hurt init modifiers stability
-    status: pending
+    status: completed
   - id: "3.1"
     content: HealthAction.clone tests
-    status: pending
+    status: completed
   - id: "3.2"
     content: HealthModifier.clone tests
-    status: pending
+    status: completed
   - id: "3.3"
     content: HealthModifiedAction deep clone tests
-    status: pending
+    status: completed
   - id: "4.1"
     content: HurtBox missing health
-    status: pending
+    status: completed
   - id: "4.2"
     content: HurtBox null action filter
-    status: pending
+    status: completed
   - id: "4.3"
     content: Health Affect.NONE no-op
-    status: pending
+    status: completed
   - id: "5.1"
     content: Integration HitBox → HurtBox → Health
     status: pending
@@ -54,7 +54,7 @@ isProject: true
 
 Extend existing GdUnit4 suites under [`test/`](test/) using the same patterns (`GdUnitTestSuite`, `auto_free`, `mock`, `monitor_signals`, matchers in [`test/matchers/`](test/matchers/)). No production API changes unless a test reveals a real bug (then fix only what the test requires).
 
-Status values: `todo` | `done`
+**Status legend:** ✅ done · 🚧 in_progress · ⏳ todo
 
 ```mermaid
 flowchart TB
@@ -74,19 +74,19 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  P1["Phase 1 Health gaps - todo"] --> P2["Phase 2 HitScan Basic - todo"]
-  P2 --> P3["Phase 3 Resource clones - todo"]
-  P3 --> P4["Phase 4 Edge cases - todo"]
+  P1["Phase 1 Health gaps - done"] --> P2["Phase 2 HitScan Basic - done"]
+  P2 --> P3["Phase 3 Resource clones - done"]
+  P3 --> P4["Phase 4 Edge cases - done"]
   P4 --> P5["Phase 5 Integration - todo"]
 ```
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Health gaps (`fill`, modifiers, null) | todo |
-| 2 | HitScan clone + Basic init | todo |
-| 3 | Resource clone suites | todo |
-| 4 | HurtBox / Health edge cases | todo |
-| 5 | Hit → Hurt → Health integration | todo |
+| Status | Phase | Description |
+|--------|-------|-------------|
+| ✅ | 1 | Health gaps (`fill`, modifiers, null) |
+| ✅ | 2 | HitScan clone + Basic init |
+| ✅ | 3 | Resource clone suites |
+| ✅ | 4 | HurtBox / Health edge cases |
+| ⏳ | 5 | Hit → Hurt → Health integration |
 
 Default scope: **high + medium** from the gap analysis. Out of scope: plugin registration, `@tool` HitScan editor `_set`, config-warning-only tests.
 
@@ -98,17 +98,17 @@ Extend [`test/health_test.gd`](test/health_test.gd).
 
 ```mermaid
 flowchart TB
-  T11["1.1 fill - todo"] --> T12["1.2 modifiers merge - todo"]
-  T12 --> T13["1.3 convert_affect type - todo"]
-  T13 --> T14["1.4 apply_modified_action null - todo"]
+  T11["1.1 fill - done"] --> T12["1.2 modifiers merge - done"]
+  T12 --> T13["1.3 convert_affect type - done"]
+  T13 --> T14["1.4 apply_modified_action null - done"]
 ```
 
-| ID | Task | Status |
-|----|------|--------|
-| 1.1 | `fill()` from partial and from zero (revive path via heal) | todo |
-| 1.2 | `Health.modifiers`: multiplier + incrementer merge on `apply_modified_action` | todo |
-| 1.3 | `convert_affect` / `convert_type` on Health modifiers (e.g. DAMAGE→HEAL) | todo |
-| 1.4 | `apply_modified_action(null)` no-ops without changing current | todo |
+| Status | ID | Task |
+|--------|----|------|
+| ✅ | 1.1 | `fill()` from partial and from zero (revive path via heal) |
+| ✅ | 1.2 | `Health.modifiers`: multiplier + incrementer merge on `apply_modified_action` |
+| ✅ | 1.3 | `convert_affect` / `convert_type` on Health modifiers (e.g. DAMAGE→HEAL) |
+| ✅ | 1.4 | `apply_modified_action(null)` no-ops without changing current |
 
 Reuse existing signal constants and `monitor_signals(health)` patterns already in the file.
 
@@ -118,17 +118,17 @@ Reuse existing signal constants and `monitor_signals(health)` patterns already i
 
 ```mermaid
 flowchart TB
-  T21["2.1 HitScan clone stability - todo"] --> T22["2.2 Basic Hit Scan init - todo"]
-  T22 --> T23["2.3 Basic Hurt modifiers init - todo"]
+  T21["2.1 HitScan clone stability - done"] --> T22["2.2 Basic Hit Scan init - done"]
+  T22 --> T23["2.3 Basic Hurt modifiers init - done"]
 ```
 
-| ID | Task | Files | Status |
-|----|------|-------|--------|
-| 2.1 | After `fire()` on HurtBox, assert HitScan `actions` array identity/contents unchanged (and that HurtBox received clones / separate instances) | [`test/hit_scan_2d_test.gd`](test/hit_scan_2d_test.gd), [`test/hit_scan_3d_test.gd`](test/hit_scan_3d_test.gd) | todo |
-| 2.2 | Basic Hit/Scan: calling `_ready()` twice (or simulating re-entry) leaves a single action | all six `test/basic_*_test.gd` or one shared helper + 2D/3D spot checks | todo |
-| 2.3 | Basic Hurt: modifiers dict has exactly KINETIC + MEDICINE after init; no duplicate keys on re-init | [`test/basic_hurt_box_2d_test.gd`](test/basic_hurt_box_2d_test.gd), [`test/basic_hurt_box_3d_test.gd`](test/basic_hurt_box_3d_test.gd) | todo |
+| Status | ID | Task | Files |
+|--------|----|------|-------|
+| ✅ | 2.1 | After `fire()` on HurtBox, assert HitScan `actions` array identity/contents unchanged (and that HurtBox received clones / separate instances) | [`test/hit_scan_2d_test.gd`](test/hit_scan_2d_test.gd), [`test/hit_scan_3d_test.gd`](test/hit_scan_3d_test.gd) |
+| ✅ | 2.2 | Basic Hit/Scan: calling `_ready()` twice (or simulating re-entry) leaves a single action | all six `test/basic_*_test.gd` or one shared helper + 2D/3D spot checks |
+| ✅ | 2.3 | Basic Hurt: modifiers dict has exactly KINETIC + MEDICINE after init; no duplicate keys on re-init | [`test/basic_hurt_box_2d_test.gd`](test/basic_hurt_box_2d_test.gd), [`test/basic_hurt_box_3d_test.gd`](test/basic_hurt_box_3d_test.gd) |
 
-Note: if 2.1 fails today, that confirms the HitScan-vs-HitBox clone inconsistency from the optimize plan — fix HitScan to clone like HitBox so the test documents correct behavior.
+Note: HitScan clone production fix is done in Wave A; these tests should pass against current code.
 
 ---
 
@@ -138,15 +138,15 @@ Add [`test/health_action_test.gd`](test/health_action_test.gd), [`test/health_mo
 
 ```mermaid
 flowchart TB
-  T31["3.1 HealthAction.clone - todo"] --> T32["3.2 HealthModifier.clone - todo"]
-  T32 --> T33["3.3 HealthModifiedAction deep clone - todo"]
+  T31["3.1 HealthAction.clone - done"] --> T32["3.2 HealthModifier.clone - done"]
+  T32 --> T33["3.3 HealthModifiedAction deep clone - done"]
 ```
 
-| ID | Task | Status |
-|----|------|--------|
-| 3.1 | `HealthAction.clone()` is equal but not same instance; mutating clone does not change original | todo |
-| 3.2 | `HealthModifier.clone()` same guarantees | todo |
-| 3.3 | `HealthModifiedAction.clone()` deep-clones nested action + modifier (fix shallow clone if test fails) | todo |
+| Status | ID | Task |
+|--------|----|------|
+| ✅ | 3.1 | `HealthAction.clone()` is equal but not same instance; mutating clone does not change original |
+| ✅ | 3.2 | `HealthModifier.clone()` same guarantees |
+| ✅ | 3.3 | `HealthModifiedAction.clone()` deep-clones nested action + modifier |
 
 ---
 
@@ -154,15 +154,15 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  T41["4.1 HurtBox missing health - todo"] --> T42["4.2 null action filter - todo"]
-  T42 --> T43["4.3 Affect.NONE no-op - todo"]
+  T41["4.1 HurtBox missing health - done"] --> T42["4.2 null action filter - done"]
+  T42 --> T43["4.3 Affect.NONE no-op - done"]
 ```
 
-| ID | Task | Files | Status |
-|----|------|-------|--------|
-| 4.1 | `apply_all_actions` with `health == null` does not call Health; assert `push_error` if GdUnit supports it, else assert no crash + current unchanged via spy | [`test/hurt_box_2d_test.gd`](test/hurt_box_2d_test.gd), 3D twin | todo |
-| 4.2 | Null entries in actions array are filtered before `apply_all_modified_actions` | same | todo |
-| 4.3 | `Health.apply_modified_action` with `Affect.NONE` leaves current unchanged | [`test/health_test.gd`](test/health_test.gd) | todo |
+| Status | ID | Task | Files |
+|--------|----|------|-------|
+| ✅ | 4.1 | `apply_all_actions` with `health == null` does not call Health; assert `push_error` if GdUnit supports it, else assert no crash + current unchanged via spy | [`test/hurt_box_2d_test.gd`](test/hurt_box_2d_test.gd), 3D twin |
+| ✅ | 4.2 | Null entries in actions array are filtered before `apply_all_modified_actions` | same |
+| ✅ | 4.3 | `Health.apply_modified_action` with `Affect.NONE` leaves current unchanged | [`test/health_test.gd`](test/health_test.gd) |
 
 ---
 
@@ -175,10 +175,10 @@ flowchart LR
   T51["5.1 HitBox path - todo"] --> T52["5.2 HitScan fire path - todo"]
 ```
 
-| ID | Task | Status |
-|----|------|--------|
-| 5.1 | Real `BasicHitBox2D` → `BasicHurtBox2D` → `Health` via `_on_area_entered`; assert health decreased and signals | todo |
-| 5.2 | Real `BasicHitScan2D.fire()` → same HurtBox/Health path | todo |
+| Status | ID | Task |
+|--------|----|------|
+| ⏳ | 5.1 | Real `BasicHitBox2D` → `BasicHurtBox2D` → `Health` via `_on_area_entered`; assert health decreased and signals |
+| ⏳ | 5.2 | Real `BasicHitScan2D.fire()` → same HurtBox/Health path |
 
 Use [`test/scenes/test_character.tscn`](test/scenes/test_character.tscn) or assemble nodes in `before_test()` with `auto_free`.
 

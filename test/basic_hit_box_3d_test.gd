@@ -33,3 +33,8 @@ func test_amount() -> void:
 	action.amount = 25
 	assert_int(hit_box.actions.size()).is_equal(1)
 	assert_object(hit_box.actions[0]).is_equal(HealthActionMatcher.new(action))
+
+func test_ready_does_not_duplicate_actions() -> void:
+	assert_int(hit_box.actions.size()).is_equal(1)
+	hit_box._ready()
+	assert_int(hit_box.actions.size()).is_equal(1)

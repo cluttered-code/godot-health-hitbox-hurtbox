@@ -81,3 +81,15 @@ func test_fire_area() -> void:
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HIT_BOX_ENTERED, [any()])
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_HURT_BOX_ENTERED, [any()])
 	await assert_signal(signals).wait_until(50).is_not_emitted(SIG_ACTION_APPLIED, [any()])
+
+
+func test_fire_clones_actions() -> void:
+	hit_scan._collider = mock_hurt_box
+	var original_action: HealthAction = hit_scan.actions[0]
+
+	hit_scan.fire()
+
+	assert_int(hit_scan.actions.size()).is_equal(1)
+	assert_object(hit_scan.actions[0]).is_same(original_action)
+	assert_int(original_action.amount).is_equal(10)
+	verify(mock_hurt_box, 1).apply_all_actions([HealthActionMatcher.new(action)])

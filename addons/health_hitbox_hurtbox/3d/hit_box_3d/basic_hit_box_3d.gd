@@ -19,6 +19,7 @@ class_name BasicHitBox3D extends HitBox3D
 
 func _ready() -> void:
 	super()
+	actions.clear()
 	actions.append(HealthAction.new(affect, _type_from_affect(affect), amount))
 
 
