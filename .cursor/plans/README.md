@@ -48,11 +48,11 @@ Do work in **waves**. Waves A→B lock behavior before the big refactor in C.
 
 ```mermaid
 flowchart TB
-  A["Wave A Optimize Phase 1 - done"]
-  B["Wave B Better Testing Phases 1 to 4 - done"]
-  C["Wave C Optimize Phase 2 shared helpers - todo"]
-  D["Wave D Better Testing Phase 5 - todo"]
-  E["Wave E Optimize Phase 3 version bump - todo"]
+  A["✅ Wave A Optimize Phase 1"]
+  B["✅ Wave B Better Testing Phases 1 to 4"]
+  C["⏳ Wave C Optimize Phase 2 shared helpers"]
+  D["⏳ Wave D Better Testing Phase 5"]
+  E["⏳ Wave E Optimize Phase 3 version bump"]
   A --> B
   B --> C
   C --> D
