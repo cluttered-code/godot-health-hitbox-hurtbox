@@ -1,25 +1,3 @@
----
-name: Global Roadmap
-overview: "Index of project plans with suggested execution order. Prefer correctness fixes, then tests that lock them in, then shared-helper refactor, then remaining coverage and version bump."
-todos:
-  - id: "A"
-    content: "Optimize Phase 1 — correctness (HitScan clone, Basic init, deep clone, Health hygiene)"
-    status: completed
-  - id: "B"
-    content: "Better Testing Phases 1–4 — Health/HitScan/Basic/resources/edges (covers Optimize 3.2–3.5)"
-    status: completed
-  - id: "C"
-    content: "Optimize Phase 2 — shared helpers + thin wrappers + plugin.gd"
-    status: pending
-  - id: "D"
-    content: "Better Testing Phase 5 — Hit→Hurt→Health integration"
-    status: pending
-  - id: "E"
-    content: "Optimize Phase 3 wrap-up — version bump 5.0.5 (README already done)"
-    status: pending
-isProject: true
----
-
 # Global roadmap
 
 One place to see all plans and the suggested order to execute them. Detail lives in the linked plans; update status here when a **wave** finishes.
