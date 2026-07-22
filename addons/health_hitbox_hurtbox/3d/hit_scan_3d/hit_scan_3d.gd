@@ -66,11 +66,8 @@ func fire() -> void:
 
 
 func _clone_actions() -> Array[HealthAction]:
-	var dup: Array[HealthAction]
-	dup.assign(
-		actions.map(
-			func(action: HealthAction) -> HealthAction: return action.clone()
-		)
-	)
+	var cloned_actions: Array[HealthAction]
+	for action in actions:
+		cloned_actions.append(action.clone())
 
-	return dup
+	return cloned_actions
