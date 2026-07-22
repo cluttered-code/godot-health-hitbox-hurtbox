@@ -48,11 +48,8 @@ func _on_area_entered(area: Area2D) -> void:
 
 
 func _clone_actions() -> Array[HealthAction]:
-	var dup: Array[HealthAction]
-	dup.assign(
-		actions.map(
-			func(action: HealthAction) -> HealthAction: return action.clone()
-		)
-	)
-
-	return dup
+	var cloned_actions: Array[HealthAction]
+	for action in actions:
+		cloned_actions.append(action.clone())
+	
+	return cloned_actions

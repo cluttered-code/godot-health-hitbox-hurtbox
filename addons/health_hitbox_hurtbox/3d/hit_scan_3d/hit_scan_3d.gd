@@ -61,5 +61,13 @@ func fire() -> void:
 	
 	var hurt_box: HurtBox3D = collider
 	hurt_box_entered.emit(hurt_box)
-	hurt_box.apply_all_actions(actions)
+	hurt_box.apply_all_actions(_clone_actions())
 	action_applied.emit(hurt_box)
+
+
+func _clone_actions() -> Array[HealthAction]:
+	var cloned_actions: Array[HealthAction]
+	for action in actions:
+		cloned_actions.append(action.clone())
+
+	return cloned_actions

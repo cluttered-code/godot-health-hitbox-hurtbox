@@ -19,6 +19,7 @@ class_name BasicHitScan2D extends HitScan2D
 
 
 func _ready() -> void:
+	actions.clear()
 	actions.append(HealthAction.new(affect, _type_from_affect(affect), amount))
 
 

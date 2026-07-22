@@ -21,15 +21,18 @@ func apply_all_actions(actions: Array[HealthAction]) -> void:
 		return
 	
 	var modified_actions: Array[HealthModifiedAction]
-	modified_actions.assign(
-		actions.filter(func(action: HealthAction) -> bool: return action != null)
-			.map(_map_modified_action)
-	)
+	for action in actions:
+		var modified_action := _map_modified_action(action)
+		if modified_action == null:
+			continue
+		modified_actions.append(modified_action)
 	
 	health.apply_all_modified_actions(modified_actions)
 
 
 func _map_modified_action(action: HealthAction) -> HealthModifiedAction:
+	if action == null:
+		return null
 	var modifier := modifiers.get(action.type, HealthModifier.new())
 	var modified_action := HealthModifiedAction.new(action, modifier.clone())
 	return modified_action

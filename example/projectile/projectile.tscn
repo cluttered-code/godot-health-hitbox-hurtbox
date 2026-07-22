@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://gtb70vt133hn"]
+[gd_scene format=3 uid="uid://gtb70vt133hn"]
 
 [ext_resource type="Script" uid="uid://cyo7agxu73seo" path="res://example/projectile/projectile.gd" id="1_3ruoe"]
 [ext_resource type="Texture2D" uid="uid://b2aimahotvsyr" path="res://assets/projectile.png" id="2_v4j7r"]
@@ -7,20 +7,20 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_60ck8"]
 size = Vector2(3.99997, 9)
 
-[node name="Projectile" type="Node2D"]
+[node name="Projectile" type="Node2D" unique_id=15240867]
 scale = Vector2(-1, 1)
 script = ExtResource("1_3ruoe")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=497386533]
 texture = ExtResource("2_v4j7r")
 
-[node name="HitBox2D" type="Area2D" parent="."]
+[node name="HitBox2D" type="Area2D" parent="." unique_id=1247280512]
 collision_layer = 256
 collision_mask = 304
 script = ExtResource("3_6hhp3")
 amount = 10
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox2D" unique_id=193517122]
 position = Vector2(-0.499993, 1.33315e-06)
 rotation = -1.5708
 shape = SubResource("RectangleShape2D_60ck8")
